@@ -1,4 +1,4 @@
-registerMod(shapez => {
+registerMod(() => {
     return class ModImpl extends shapez.Mod {
         constructor(app, modLoader) {
             super(
@@ -15,30 +15,6 @@ registerMod(shapez => {
             );
         }
 
-        init() {
-            //Add some custom css
-            this.modInterface.registerCss(`
-                 * {
-                     font-family: "Comic Sans", "Comic Sans MS", Tahoma !important;
-                 }
-             `);
-            
-
-            // Modify the theme colors
-            this.signals.preprocessTheme.add(({ theme }) => {
-                
-            });
-
-            this.modInterface.registerTranslations("en", {
-                ingame: {
-                    interactiveTutorial: {
-                        title: "Hello",
-                        hints: {
-                            "1_1_extractor": "World!",
-                        },
-                    },
-                },
-            });
-        }
+        init() {}
     };
 });

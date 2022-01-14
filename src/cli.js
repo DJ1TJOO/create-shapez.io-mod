@@ -28,6 +28,10 @@ export async function cli(args) {
 			.nargs('r', 1)
 			.describe('r', 'Specify repository to download from')
 
+			.alias('f', 'files')
+			.nargs('f', 1)
+			.describe('f', 'When upgrade upgrades files')
+
 			.alias('g', 'git')
 			.nargs('g', 0)
 			.describe('g', 'Initializes git')
