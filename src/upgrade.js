@@ -34,6 +34,7 @@ async function promptForMissingOptions(options) {
 	const defaultShapezRepo = 'https://github.com/DJ1TJOO/shapez.io/tree/modloader-try-again';
 	const defaultInstallShapez = true;
 	const defaultUpdateFiles = true;
+	const defaultPackageManager = 'yarn';
 
 	if (options.skipPrompts) {
 		return {
@@ -41,6 +42,7 @@ async function promptForMissingOptions(options) {
 			shapez: options.shapez || defaultShapez,
 			installShapez: options.shapez || defaultInstallShapez,
 			updateFiles: options.updateFiles || defaultUpdateFiles,
+			packageManager: defaultPackageManager,
 		};
 	}
 
