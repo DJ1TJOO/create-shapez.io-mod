@@ -21,7 +21,11 @@ npx create-shapezio-mod
 ## Usage
 
 ```sh
-npx create-shapezio-mod
+npx create-shapezio-mod init
+```
+
+```sh
+npx create-shapezio-mod upgrade
 ```
 
 ## Run tests
