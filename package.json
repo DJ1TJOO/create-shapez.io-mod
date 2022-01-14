@@ -3,7 +3,7 @@
 	"version": "0.1.5",
 	"main": "index.js",
 	"author": "DJ1TJOO",
-	"license": "MIT",
+	"license": "GPLV3",
 	"bin": {
 		"create-shapezio-mod": "bin/create-shapezio-mod"
 	},
