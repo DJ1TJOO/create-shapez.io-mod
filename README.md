@@ -32,12 +32,13 @@ yarn build
 ```
 
 Serving the mod on http://localhost:3010/mod.js
+To test on shapez.io set local config `externalModUrl` to `http://localhost:3010/mod.js`
 
 ```sh
 yarn devMod
 ```
 
-Serving the mod on http://localhost:3010/mod.js with shapez
+Serving the mod on http://localhost:3005 with shapez.io
 
 ```sh
 yarn dev
