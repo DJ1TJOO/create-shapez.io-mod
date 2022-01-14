@@ -25,15 +25,15 @@ npx create-shapezio-mod init
 npx create-shapezio-mod upgrade
 ```
 
-Building the mod
+### Building the mod
 
 ```sh
 yarn build
 ```
 
+### Serving the mod
 Serving the mod on http://localhost:3010/mod.js
-
-To test on shapez.io set local config `externalModUrl` to `http://localhost:3010/mod.js`
+<br>To test on shapez.io set local config `externalModUrl` to `http://localhost:3010/mod.js`
 
 ```sh
 yarn devMod
