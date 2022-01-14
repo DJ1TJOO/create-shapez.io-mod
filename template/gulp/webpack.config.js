@@ -96,6 +96,12 @@ module.exports = ({
                 ),
                 THEMES: webpack.DefinePlugin.runtimeValue(
                     function () {
+                        if (!fs.existsSync("../src/themes")) {
+                            fs.mkdirSync("../src/themes", {
+                                recursive: true,
+                            });
+                        }
+
                         const themes = {};
                         const themeFiles = fs.readdirSync("../src/themes");
                         for (let i = 0; i < themeFiles.length; i++) {
