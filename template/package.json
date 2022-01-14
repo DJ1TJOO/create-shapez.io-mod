@@ -1,0 +1,27 @@
+{
+    "name": "mod_name",
+    "version": "mod_version",
+    "author": "mod_author",
+    "website": "mod_website",
+    "license": "MIT",
+    "scripts": {
+        "dev": "cd gulp && gulp",
+        "build": "cd gulp && gulp main.build",
+        "tslint": "cd src/js && tsc",
+        "lint": "eslint src/js",
+        "prettier-all": "prettier --write src/**/*.* && prettier --write gulp/**/*.*"
+    },
+    "private": true,
+    "dependencies": {
+        "eslint": "7.1.0",
+        "typescript": "3.9.3"
+    },
+    "devDependencies": {
+        "@types/node": "^17.0.8",
+        "@typescript-eslint/eslint-plugin": "3.0.1",
+        "@typescript-eslint/parser": "3.0.1",
+        "eslint-config-prettier": "6.11.0",
+        "eslint-plugin-prettier": "3.1.3",
+        "prettier": "^2.0.4"
+    }
+}

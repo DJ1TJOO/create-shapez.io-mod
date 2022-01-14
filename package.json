@@ -1,0 +1,42 @@
+{
+	"name": "create-shapezio-mod",
+	"version": "1.0.0",
+	"main": "index.js",
+	"author": "DJ1TJOO",
+	"license": "MIT",
+	"bin": {
+		"create-shapezio-mod": "bin/create-shapezio-mod"
+	},
+	"scripts": {
+		"test": "node src/test.js"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"keywords": [
+		"cli",
+		"create-shapezio-mod",
+		"shapez.io",
+		"shapez.io modding",
+		"shapez.io mod"
+	],
+	"files": [
+		"bin/",
+		"src/",
+		"template/"
+	],
+	"dependencies": {
+		"@octokit/rest": "^18.12.0",
+		"adm-zip": "^0.5.9",
+		"arg": "^5.0.1",
+		"chalk": "4.1.2",
+		"esm": "^3.2.25",
+		"github-api": "^3.4.0",
+		"inquirer": "^8.2.0",
+		"listr": "^0.14.3",
+		"ncp": "^2.0.0",
+		"pkg-install": "^1.0.0",
+		"superagent": "^7.0.1",
+		"yargs": "^17.3.1"
+	}
+}
