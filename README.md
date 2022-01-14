@@ -3,8 +3,8 @@
   <a href="https://www.npmjs.com/package/create-shapezio-mod" target="_blank">
     <img alt="Version" src="https://img.shields.io/npm/v/create-shapezio-mod.svg">
   </a>
-  <a href="#" target="_blank">
-    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
+  <a href="https://www.gnu.org/licenses/gpl-3.0.txt" target="_blank">
+    <img alt="License: GPLV3" src="https://img.shields.io/badge/License-GPLV3-yellow.svg" />
   </a>
 </p>
 
