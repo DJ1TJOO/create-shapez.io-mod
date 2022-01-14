@@ -37,7 +37,7 @@ module.exports = ({
                 ),
                 ATLASES: webpack.DefinePlugin.runtimeValue(
                     function () {
-                        const atlases = new Map();
+                        const atlases = {};
                         const atlasJsons = new Map();
                         const atlasFiles = fs.readdirSync("../build/atlases");
                         for (let i = 0; i < atlasFiles.length; i++) {
@@ -47,33 +47,24 @@ module.exports = ({
                             const readPath = path.join("../build/atlases", filename);
 
                             if (ext === ".png") {
-                                atlases.set(
-                                    name,
+                                atlases[name] =
                                     "data:image/png;base64," +
-                                        Buffer.from(fs.readFileSync(readPath)).toString("base64")
-                                );
+                                    Buffer.from(fs.readFileSync(readPath)).toString("base64");
                             } else if (ext === ".json") {
                                 const json = JSON.parse(fs.readFileSync(readPath, "utf8"));
-                                json.sourceData = json.frames;
-                                delete json.frames;
                                 atlasJsons.set(name, JSON.stringify(json));
                             }
                         }
 
-                        return {
-                            hq: {
-                                src: "`" + atlases.get("hq") + "`",
-                                atlasData: atlasJsons.get("hq"),
-                            },
-                            mq: {
-                                src: "`" + atlases.get("mq") + "`",
-                                atlasData: atlasJsons.get("mq"),
-                            },
-                            lq: {
-                                src: "`" + atlases.get("lq") + "`",
-                                atlasData: atlasJsons.get("lq"),
-                            },
-                        };
+                        const atlasesObject = {};
+                        for (const name in atlases) {
+                            const src = atlases[name];
+                            atlasesObject[name] = {
+                                src: "`" + src + "`",
+                                atlasData: "`" + atlasJsons.get(name) + "`",
+                            };
+                        }
+                        return atlasesObject;
                     },
                     [
                         "../build/atlases/atlas0_hq.json",
@@ -159,20 +150,6 @@ module.exports = ({
                 },
                 {
                     test: /\.js$/,
-                    enforce: "pre",
-                    exclude: /node_modules/,
-                    use: [
-                        {
-                            loader: "webpack-strip-block",
-                            options: {
-                                start: "typehints:start",
-                                end: "typehints:end",
-                            },
-                        },
-                    ],
-                },
-                {
-                    test: /\.js$/,
                     exclude: /node_modules/,
                     use: [
                         StringReplacePlugin.replace({
@@ -181,44 +158,37 @@ module.exports = ({
                                     pattern:
                                         /import[ \n]*{([a-zA-Z0-9_$, \n]*)*}[ \n]*from[ \n]*[`|"|'](shapez\/[^]*?)[`|"|'];/gms,
                                     replacement: (match, variables, path) => {
-                                        return `const {${variables}} = shapez["${path.replace(
-                                            "shapez/",
-                                            ""
-                                        )}"];`;
+                                        return `const {${variables}} = shapez;`;
                                     },
                                 },
                                 {
-                                    pattern:
-                                        /(const|var|let|[a-zA-Z0-9\.]*?)?[ \n]*([a-zA-Z0-9]*?)[ \n]*=[ \n]*(new )?[ \n]*([a-zA-Z0-9\.]*)?Mod\(([^]*?)\);/gms,
-                                    replacement: (match, type, variableName) => {
-                                        const css = `${variableName}.registerCss(CSS_MAIN);\n${variableName}.registerCss(CSS_RESOURCES);`;
+                                    pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
+                                    replacement: match => {
+                                        const css = `this.modInterface.registerCss(CSS);`;
 
                                         return injectCss ? `${match}\n${css}` : `${match}`;
                                     },
                                 },
                                 {
-                                    pattern:
-                                        /(const|var|let|[a-zA-Z0-9\.]*?)?[ \n]*([a-zA-Z0-9]*?)[ \n]*=[ \n]*(new )?[ \n]*([a-zA-Z0-9\.]*)?Mod\(([^]*?)\);/gms,
-                                    replacement: (match, type, variableName) => {
-                                        const atlases = `const atlases = ATLASES;\n${variableName}.registerAtlas(atlases.hq.src, atlases.hq.atlasData);\n${variableName}.registerAtlas(atlases.mq.src, atlases.mq.atlasData);\n${variableName}.registerAtlas(atlases.lq.src, atlases.lq.atlasData);`;
+                                    pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
+                                    replacement: match => {
+                                        const atlases = `const importAtlases = ATLASES;\nfor (const key in importAtlases) {\nconst atlas=importAtlases[key];\nthis.modInterface.registerAtlas(atlas.src, atlas.atlasData);\n}`;
 
                                         return injectAtlas ? `${match}\n${atlases}` : `${match}`;
                                     },
                                 },
                                 {
-                                    pattern:
-                                        /(const|var|let|[a-zA-Z0-9\.]*?)?[ \n]*([a-zA-Z0-9]*?)[ \n]*=[ \n]*(new )?[ \n]*([a-zA-Z0-9\.]*)?Mod\(([^]*?)\);/gms,
-                                    replacement: (match, type, variableName) => {
-                                        const translations = `const translations = TRANSLATIONS;\nfor (const translationId in translations) {\nconst translation = translations[translationId];\n${variableName}.registerTranslation(translationId, translation, translation.name ? { name: translation.name, code: translationId, region: translation.region || "" } : null);\n}`;
+                                    pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
+                                    replacement: match => {
+                                        const translations = `const importTranslations = TRANSLATIONS;\nfor (const translationId in importTranslations) {\nconst translation = importTranslations[translationId];\nthis.modInterface.registerTranslations(translationId, translation);\n}`;
 
                                         return injectTranslations ? `${match}\n${translations}` : `${match}`;
                                     },
                                 },
                                 {
-                                    pattern:
-                                        /(const|var|let|[a-zA-Z0-9\.]*?)?[ \n]*([a-zA-Z0-9]*?)[ \n]*=[ \n]*(new )?[ \n]*([a-zA-Z0-9\.]*)?Mod\(([^]*?)\);/gms,
-                                    replacement: (match, type, variableName) => {
-                                        const themes = `const themes = THEMES;\nfor (const themeId in themes) {\nconst theme = themes[themeId];\n${variableName}.registerTheme(theme);\n}`;
+                                    pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
+                                    replacement: match => {
+                                        const themes = `const importThemes = THEMES;\nthis.signals.preprocessTheme.add(({ id, theme }) => {\nfor (const themeId in importThemes) {\nif (id !== themeId) continue;\nconst themeMod = importThemes[themeId];\nshapez.matchDataRecursive(theme, themeMod);\n}});`;
 
                                         return injectThemes ? `${match}\n${themes}` : `${match}`;
                                     },

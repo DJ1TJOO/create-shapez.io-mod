@@ -144,7 +144,7 @@ gulp.task("main.watch.themes", function () {
 
 gulp.task("main.watch.translations", function () {
     // Watch the source folder and reload when anything changed
-    const src = getGlobs(folders.src, ["yaml"]);
+    const src = getGlobs(folders.src, ["yaml", "yml"]);
     return gulp.watch(src, gulp.series("translations", "main.watch.trigger", "main.serve.shapez.reload"));
 });
 

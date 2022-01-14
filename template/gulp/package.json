@@ -13,6 +13,7 @@
         "@babel/plugin-transform-classes": "^7.16.7",
         "@babel/preset-env": "^7.16.7",
         "browser-sync": "^2.27.7",
+        "circular-dependency-plugin": "^5.2.2",
         "css-mqpacker": "^7.0.0",
         "css-to-string-loader": "^0.1.3",
         "cssnano": "^5.0.15",
@@ -20,6 +21,7 @@
         "fancy-log": "^2.0.0",
         "gulp": "^4.0.2",
         "gulp-clean": "^0.4.0",
+        "gulp-concat": "^2.6.1",
         "gulp-dart-sass": "^1.0.2",
         "gulp-if": "^3.0.0",
         "gulp-imagemin": "7.1.0",
@@ -47,12 +49,11 @@
         "unused-files-webpack-plugin": "^3.4.0",
         "webpack": "^4.43.0",
         "webpack-stream": "^5.2.1",
-        "webpack-strip-block": "^0.2.0",
+        "webpack-strip-block": "^0.3.0",
         "yaml-loader": "^0.6.0",
         "yargs": "^17.3.1"
     },
     "dependencies": {
-        "gulp-concat": "^2.6.1",
         "postcss": "^8.4.5"
     }
 }

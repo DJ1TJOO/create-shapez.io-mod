@@ -1,4 +1,5 @@
 const { existsSync } = require("fs");
+const fs = require("fs");
 const path = require("path");
 const atlasToJson = require("./atlas2json");
 
@@ -65,6 +66,12 @@ function gulptasksAtlas($, gulp, folders) {
         const source = JSON.stringify("../src/res");
         const dest = JSON.stringify("../build/atlases");
 
+        if (!fs.existsSync("../build/atlases")) {
+            fs.mkdirSync("../build/atlases", {
+                recursive: true,
+            });
+        }
+
         try {
             // First check whether Java is installed
             execute("java -version");
@@ -96,7 +103,7 @@ function gulptasksAtlas($, gulp, folders) {
             }
 
             execute(`java -jar runnable-texturepacker.jar ${source} ${dest} atlas0 ${config}`);
-        } catch {
+        } catch (error) {
             console.warn("Building atlas failed. Java not found / unsupported version?");
         }
         cb();

@@ -2266,6 +2266,11 @@ cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
+circular-dependency-plugin@^5.2.2:
+  version "5.2.2"
+  resolved "https://registry.yarnpkg.com/circular-dependency-plugin/-/circular-dependency-plugin-5.2.2.tgz#39e836079db1d3cf2f988dc48c5188a44058b600"
+  integrity sha512-g38K9Cm5WRwlaH6g03B9OEz/0qRizI+2I7n+Gz+L5DxXJAPAiWQvwlYNm1V1jkdpUv95bOe/ASm2vfi/G560jQ==
+
 circular-json@^0.3.1:
   version "0.3.3"
   resolved "https://registry.npmjs.org/circular-json/-/circular-json-0.3.3.tgz"
@@ -9899,10 +9904,10 @@ webpack-stream@^5.2.1:
     vinyl "^2.1.0"
     webpack "^4.26.1"
 
-webpack-strip-block@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.npmjs.org/webpack-strip-block/-/webpack-strip-block-0.2.0.tgz"
-  integrity sha1-xg1KcD4O7uiJXn8avptf6RRoFHA=
+webpack-strip-block@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/webpack-strip-block/-/webpack-strip-block-0.3.0.tgz#e864c8d71fade02c55332f7fb34f7970ba5076c8"
+  integrity sha512-rXN+SI6S7tzUr1Jvhq3Rcl2bGfpY5ZC9XSRm2rH68eYkDheCczEs61iir1A00iv1Nt8FY1J6BDRgXKtil+fk+g==
   dependencies:
     loader-utils "^1.1.0"
 
