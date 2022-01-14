@@ -22,9 +22,6 @@ npx create-shapezio-mod
 
 ```sh
 npx create-shapezio-mod init
-```
-
-```sh
 npx create-shapezio-mod upgrade
 ```
 
