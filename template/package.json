@@ -3,9 +3,10 @@
     "version": "mod_version",
     "author": "mod_author",
     "website": "mod_website",
-    "license": "MIT",
+    "license": "GPLV3",
     "scripts": {
         "dev": "cd gulp && gulp",
+        "devMod": "cd gulp && gulp main.serve.mod",
         "build": "cd gulp && gulp main.build",
         "tslint": "cd src/js && tsc",
         "lint": "eslint src/js",

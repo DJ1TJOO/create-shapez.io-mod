@@ -25,6 +25,24 @@ npx create-shapezio-mod init
 npx create-shapezio-mod upgrade
 ```
 
+Building the mod
+
+```sh
+yarn build
+```
+
+Serving the mod on http://localhost:3010/mod.js
+
+```sh
+yarn devMod
+```
+
+Serving the mod on http://localhost:3010/mod.js with shapez
+
+```sh
+yarn dev
+```
+
 ## Run tests
 
 ```sh
