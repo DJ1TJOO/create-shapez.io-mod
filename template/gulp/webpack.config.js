@@ -194,7 +194,7 @@ module.exports = ({
                                 {
                                     pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
                                     replacement: match => {
-                                        const themes = `const importThemes = THEMES;\nthis.signals.preprocessTheme.add(({ id, theme }) => {\nfor (const themeId in importThemes) {\nif (id !== themeId) continue;\nconst themeMod = importThemes[themeId];\nshapez.matchDataRecursive(theme, themeMod);\n}});`;
+                                        const themes = `const importThemes = THEMES;\nfor (const themeId in importThemes) {\nconst themeMod = importThemes[themeId];\nif (shapez.THEMES[themeId]) {\nshapez.matchDataRecursive(shapez.THEMES[themeId], themeMod);\n} else {\nthis.modInterface.registerGameTheme({\nid: themeId,\nname: themeMod.name,\ntheme: themeMod,\n});\n}\n}`;
 
                                         return injectThemes ? `${match}\n${themes}` : `${match}`;
                                     },
