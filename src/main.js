@@ -155,7 +155,7 @@ async function downloadShapez(options) {
 					declare const THEMES: {
 						[x: string]: object
 					};
-					declare function registerMod(mod: () => import("shapez/mods/mod").Mod): void;`;
+					declare function registerMod(mod: () => typeof import("shapez/mods/mod").Mod): void;`;
 
 		fs.writeFileSync('./src/js/types.d.ts', types);
 
