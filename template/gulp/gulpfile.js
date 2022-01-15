@@ -1,11 +1,7 @@
 const exec = require("child_process").exec;
 const path = require("path");
-const browserSync = require("browser-sync").create({});
 const gulp = require("gulp");
 const fs = require("fs");
-const log = require("fancy-log");
-
-// TODO: atlas and images
 
 // Load other plugins dynamically
 const $ = require("gulp-load-plugins")({
@@ -39,30 +35,24 @@ gulp.task("utils.cleanup", gulp.series("utils.cleanBuildFolder", "utils.cleanSha
 
 // Serve
 gulp.task("main.serve.shapez", function (cb) {
-    browserSync.init({
-        server: folders.shapezBuild,
-        port: 3005,
-        ghostMode: {
-            clicks: false,
-            scroll: false,
-            location: false,
-            forms: false,
-        },
-        logLevel: "info",
-        logPrefix: "BS",
-        online: false,
-        xip: false,
-        notify: false,
-        reloadDebounce: 100,
-        reloadOnRestart: true,
-        watchEvents: ["add", "change"],
-    });
+    if (fs.existsSync("./shapez/")) {
+        exec("yarn dev", {
+            cwd: "../shapez/",
+        });
+    }
 
     return cb();
 });
 
 gulp.task("main.serve.shapez.reload", function (cb) {
-    browserSync.reload();
+    if (fs.existsSync("./shapez/")) {
+        const main=path.relative(__dirname, path.join("./shapez", "src", "js", "main.js"));
+        fs.appendFileSync(main, "//gulp-reload!");
+        setTimeout(() => {
+            const mainFile=fs.readFileSync(main, "utf-8").replace(/[\n]?\/\/gulp-reload![\n]?/g, "");
+            fs.writeFileSync(main, mainFile);
+        }, 1000);
+    }
     return cb();
 });
 
@@ -74,7 +64,7 @@ gulp.task("main.serve.mod", function (cb) {
             },
             middleware: [
                 (req, res, next) => {
-                    res.setHeader("Access-Control-Allow-Origin", "*"); // eg.
+                    res.setHeader("Access-Control-Allow-Origin", "*");
                     next();
                 },
             ],
@@ -108,12 +98,10 @@ translations.gulptasksTranslations($, gulp, folders);
 // Builds
 gulp.task(
     "main.build",
-    // TODO: add builds
     gulp.series("utils.cleanBuildFolder", "translations", "atlas.allOptimized", "css.prod", "js")
 );
 gulp.task(
     "main.build.dev",
-    // TODO: add builds
     gulp.series("utils.cleanBuildFolder", "translations", "atlas.allOptimized", "css.dev", "js.dev")
 );
 

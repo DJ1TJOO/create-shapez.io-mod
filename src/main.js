@@ -73,37 +73,36 @@ async function downloadShapez(options) {
 			repo,
 			branch: commit !== 'latest' ? commit : branch,
 		});
-		const artifactName = 'shapezio-mod-build-' + lastCommit.data.sha.substring(0, 7);
 
-		const artifacts = await octokit.request('GET https://api.github.com/repos/{owner}/{repo}/actions/artifacts', {
+		const commitId = lastCommit.data.sha.substring(0, 7);
+
+		const download = await octokit.repos.downloadZipballArchive({
 			owner,
 			repo,
-		});
-		const artifactMeta = artifacts.data.artifacts.find((x) => x.name === artifactName);
-
-		const workflows = await octokit.request('GET https://api.github.com/repos/{owner}/{repo}/actions/workflows/ci-development.yml/runs', {
-			owner,
-			repo,
-		});
-		const workflowMeta = workflows.data.workflow_runs.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-
-		const artifact = await octokit.request(`GET https://nightly.link/{owner}/{repo}/suites/{check_suite_id}/artifacts/{artifact_id}`, {
-			owner,
-			repo,
-			check_suite_id: workflowMeta.check_suite_id,
-			artifact_id: artifactMeta.id,
+			ref: commit !== 'latest' ? commit : branch,
 		});
 
-		fs.writeFileSync('./shapez-zip.zip', Buffer.from(artifact.data));
+		fs.writeFileSync('./shapez-zip.zip', Buffer.from(download.data));
 
 		const zip = new admZip('./shapez-zip.zip');
-		zip.extractEntryTo('types.d.ts', './src/js/', true, true);
-		zip.extractAllTo('./shapez', true);
 
+		// Extract new shapez
+		zip.extractAllTo(`./shapez-${owner}-${repo}-${commitId}/`, true);
+		await copy(`./shapez-${owner}-${repo}-${commitId}/${owner}-${repo}-${commitId}`, './shapez', {
+			clobber: true,
+		});
+		fs.rmdirSync(`./shapez-${owner}-${repo}-${commitId}`, { recursive: true, force: true });
 		fs.unlinkSync('./shapez-zip.zip');
+
+		// Update local config
+		fs.copyFileSync('./shapez/src/js/core/config.local.template.js', './shapez/src/js/core/config.local.js');
+		let config = fs.readFileSync('./shapez/src/js/core/config.local.js', 'utf-8');
+		config = config.replace(/(\/\/)?[\s]*externalModUrl:[^]*?"[^]*?",/gms, 'externalModUrl: "http://localhost:3010/mod.js",');
+		fs.writeFileSync('./shapez/src/js/core/config.local.js', config);
 
 		return;
 	} catch (error) {
+		console.log(error);
 		return Promise.reject(new Error('Failed to download shapez.io build'));
 	}
 }
@@ -173,6 +172,24 @@ export async function createProject(options) {
 				}),
 			skip: () => (!options.runInstall ? 'Pass --install to automatically install dependencies' : undefined),
 		},
+		{
+			title: 'Install shapez dependencies',
+			task: () =>
+				projectInstall({
+					prefer: options.packageManager,
+					cwd: path.join(options.targetDirectory, 'shapez'),
+				}),
+			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
+		},
+		{
+			title: 'Install gulp shapez dependencies',
+			task: () =>
+				projectInstall({
+					prefer: options.packageManager,
+					cwd: path.join(options.targetDirectory, 'shapez', 'gulp'),
+				}),
+			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
+		},
 	]);
 
 	await tasks.run();
@@ -223,6 +240,24 @@ export async function upgradeProject(options) {
 					cwd: path.join(options.targetDirectory, 'gulp'),
 				}),
 			skip: () => (!options.runInstall ? 'Pass --install to automatically install dependencies' : undefined),
+		},
+		{
+			title: 'Install shapez dependencies',
+			task: () =>
+				projectInstall({
+					prefer: options.packageManager,
+					cwd: path.join(options.targetDirectory, 'shapez'),
+				}),
+			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
+		},
+		{
+			title: 'Install gulp shapez dependencies',
+			task: () =>
+				projectInstall({
+					prefer: options.packageManager,
+					cwd: path.join(options.targetDirectory, 'shapez', 'gulp'),
+				}),
+			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
 		},
 	]);
 
