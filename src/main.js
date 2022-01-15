@@ -60,6 +60,17 @@ async function updateTemplateFiles(options) {
 	return;
 }
 
+function getClosest(string, offset, regex) {
+	let indices = [];
+
+	let result;
+	while ((result = regex.exec(string))) {
+		indices.push(result);
+	}
+
+	return indices.reverse().find((x) => x.index <= offset);
+}
+
 async function downloadShapez(options) {
 	const commit = options.shapez;
 	let [owner, repo, tree, branch] = options.shapezRepo.replace('https://github.com/', '').split('/');
@@ -81,24 +92,72 @@ async function downloadShapez(options) {
 			repo,
 			ref: commit !== 'latest' ? commit : branch,
 		});
-
 		fs.writeFileSync('./shapez-zip.zip', Buffer.from(download.data));
 
-		const zip = new admZip('./shapez-zip.zip');
-
 		// Extract new shapez
+		const zip = new admZip('./shapez-zip.zip');
 		zip.extractAllTo(`./shapez-${owner}-${repo}-${commitId}/`, true);
 		await copy(`./shapez-${owner}-${repo}-${commitId}/${owner}-${repo}-${commitId}`, './shapez', {
 			clobber: true,
 		});
-		fs.rmdir(`./shapez-${owner}-${repo}-${commitId}`, { recursive: true, force: true });
-		fs.unlink('./shapez-zip.zip');
+		fs.rmdir(`./shapez-${owner}-${repo}-${commitId}`, { recursive: true, force: true }, () => {});
+		fs.unlink('./shapez-zip.zip', () => {});
 
 		// Update local config
-		fs.copyFileSync('./shapez/src/js/core/config.local.template.js', './shapez/src/js/core/config.local.js');
-		let config = fs.readFileSync('./shapez/src/js/core/config.local.js', 'utf-8');
+		let config = fs.readFileSync('./shapez/src/js/core/config.local.template.js', 'utf-8');
 		config = config.replace(/(\/\/)?[\s]*externalModUrl:[^]*?"[^]*?",/gms, 'externalModUrl: "http://localhost:3010/mod.js",');
 		fs.writeFileSync('./shapez/src/js/core/config.local.js', config);
+
+		// Generate types.d.ts
+		execSync('tsc src/js/application.js --declaration --allowJs --emitDeclarationOnly --skipLibCheck --out types.js', {
+			cwd: './shapez',
+		});
+
+		// Update types
+		let types = fs.readFileSync('./shapez/types.d.ts', 'utf-8');
+		types = types.replace(/declare module "([^]*?)"/gms, (matched, moduleName) => `declare module "shapez/${moduleName}"`);
+		types = types.replace(/import\("([^]*?)"\)/gms, (matched, moduleName, offset, string) => {
+			moduleName = moduleName.replace('.js', '');
+			if (moduleName.startsWith('.')) {
+				const closest = getClosest(string, offset, /declare module "([^]*?)"/gms);
+
+				const parent = path.dirname(closest['0'].replace('declare module "', '').replace('"', ''));
+				const module = path.join(parent, moduleName).replace(/\\/g, '/');
+
+				return `import("${module}")`;
+			} else {
+				return `import("shapez/${moduleName}")`;
+			}
+		});
+		types = types.replace(
+			/import {([^]*?)} from "([^]*?)";/gms,
+			(matched, imports, moduleName) => `import {${imports}} from "shapez/${moduleName.replace(/\.\.\//gms, '').replace('.js', '')}"`,
+		);
+		types = types.replace(/var/gms, 'let');
+		types += `declare const CSS_MAIN: string;
+					declare const ATLASES: {
+						hq: {
+							src: string;
+							atlasData: import("shapez/core/loader").AtlasDefinition;
+						};
+						mq: {
+							src: string;
+							atlasData: import("shapez/core/loader").AtlasDefinition;
+						};
+						lq: {
+							src: string;
+							atlasData: import("shapez/core/loader").AtlasDefinition;
+						};
+					};
+					declare const TRANSLATIONS: {
+						[x: string]: object
+					};
+					declare const THEMES: {
+						[x: string]: object
+					};
+					declare function registerMod(mod: () => import("shapez/mods/mod").Mod): void;`;
+
+		fs.writeFileSync('./src/js/types.d.ts', types);
 
 		return;
 	} catch (error) {

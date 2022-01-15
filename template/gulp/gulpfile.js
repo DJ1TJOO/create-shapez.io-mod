@@ -35,9 +35,22 @@ gulp.task("utils.cleanup", gulp.series("utils.cleanBuildFolder", "utils.cleanSha
 
 // Serve
 gulp.task("main.serve.shapez", function (cb) {
-    if (fs.existsSync("./shapez/")) {
-        exec("yarn dev", {
+    if (fs.existsSync("../shapez/")) {
+        const shapez = exec("yarn dev", {
             cwd: "../shapez/",
+        });
+        shapez.stdout.setEncoding("utf8");
+        shapez.stdout.on("data", function (data) {
+            console.log("shapez log: " + data);
+        });
+
+        shapez.stderr.setEncoding("utf8");
+        shapez.stderr.on("data", function (data) {
+            console.log("shapez error: " + data);
+        });
+
+        shapez.on("close", function (code) {
+            console.log("closing shapez");
         });
     }
 
@@ -45,11 +58,11 @@ gulp.task("main.serve.shapez", function (cb) {
 });
 
 gulp.task("main.serve.shapez.reload", function (cb) {
-    if (fs.existsSync("./shapez/")) {
-        const main=path.relative(__dirname, path.join("./shapez", "src", "js", "main.js"));
+    if (fs.existsSync("../shapez/")) {
+        const main = path.relative(__dirname, path.join("../shapez", "src", "js", "main.js"));
         fs.appendFileSync(main, "//gulp-reload!");
         setTimeout(() => {
-            const mainFile=fs.readFileSync(main, "utf-8").replace(/[\n]?\/\/gulp-reload![\n]?/g, "");
+            const mainFile = fs.readFileSync(main, "utf-8").replace(/[\n]?\/\/gulp-reload![\n]?/g, "");
             fs.writeFileSync(main, mainFile);
         }, 1000);
     }

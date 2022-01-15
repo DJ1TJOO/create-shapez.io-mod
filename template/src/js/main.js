@@ -1,5 +1,7 @@
+import { Mod } from "shapez/mods/mod";
+
 registerMod(() => {
-    return class ModImpl extends shapez.Mod {
+    return class ModImpl extends Mod {
         constructor(app, modLoader) {
             super(
                 app,

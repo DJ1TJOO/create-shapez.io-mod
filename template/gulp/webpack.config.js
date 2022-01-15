@@ -23,7 +23,7 @@ module.exports = ({
         plugins: [
             new StringReplacePlugin(),
             new webpack.DefinePlugin({
-                CSS: webpack.DefinePlugin.runtimeValue(
+                CSS_MAIN: webpack.DefinePlugin.runtimeValue(
                     function () {
                         let css = "";
                         try {
@@ -170,7 +170,7 @@ module.exports = ({
                                 {
                                     pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
                                     replacement: match => {
-                                        const css = `this.modInterface.registerCss(CSS);`;
+                                        const css = `this.modInterface.registerCss(CSS_MAIN);`;
 
                                         return injectCss ? `${match}\n${css}` : `${match}`;
                                     },
