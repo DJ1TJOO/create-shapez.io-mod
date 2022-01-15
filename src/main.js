@@ -159,9 +159,7 @@ async function downloadShapez(options) {
 					declare const shapez: any;
 					declare function registerMod(mod: () => typeof import("shapez/mods/mod").Mod): void;`;
 
-		fs.writeFileSync('./src/js/types.d.ts', types);
-
-		prettier.format('./src/js/types.d.ts', {
+		types = prettier.format('./src/js/types.d.ts', {
 			trailingComma: 'es5',
 			tabWidth: 4,
 			semi: true,
@@ -172,6 +170,10 @@ async function downloadShapez(options) {
 			bracketSpacing: true,
 			arrowParens: 'avoid',
 			endOfLine: 'auto',
+		});
+
+		fs.writeFileSync('./src/js/types.d.ts', types, {
+			overwrite: true,
 		});
 		return;
 	} catch (error) {
