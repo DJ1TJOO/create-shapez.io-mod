@@ -4,6 +4,7 @@ const webpack = require("webpack");
 
 const CircularDependencyPlugin = require("circular-dependency-plugin");
 const StringReplacePlugin = require("string-replace-webpack-plugin");
+const WebpackOnBuildPlugin = require("on-build-webpack");
 
 module.exports = ({
     watch = false,
@@ -134,6 +135,40 @@ module.exports = ({
 
                 // set the current working directory for displaying module paths
                 cwd: path.join(__dirname, "..", "src", "js"),
+            }),
+
+            new WebpackOnBuildPlugin(function (stats) {
+                if (!fs.existsSync("../mods")) {
+                    fs.mkdirSync("../mods", {
+                        recursive: true,
+                    });
+                }
+
+                const mods = [];
+                const modFiles = fs.readdirSync("../mods");
+                for (let i = 0; i < modFiles.length; i++) {
+                    const filename = modFiles[i];
+                    const ext = path.extname(filename);
+                    const readPath = path.join("../mods", filename);
+
+                    if (ext === ".js") {
+                        mods.push(fs.readFileSync(readPath, "utf8"));
+                    }
+                }
+
+                console.log("Changed build");
+                setTimeout(() => {
+                    fs.appendFileSync(
+                        "../build/mod.js",
+                        mods
+                            .map(
+                                x => `\n(() => {
+                        ${x}
+                    })()`
+                            )
+                            .join()
+                    );
+                }, 1000);
             }),
         ],
         module: {
