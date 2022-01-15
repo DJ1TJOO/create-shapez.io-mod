@@ -91,8 +91,8 @@ async function downloadShapez(options) {
 		await copy(`./shapez-${owner}-${repo}-${commitId}/${owner}-${repo}-${commitId}`, './shapez', {
 			clobber: true,
 		});
-		fs.rmdirSync(`./shapez-${owner}-${repo}-${commitId}`, { recursive: true, force: true });
-		fs.unlinkSync('./shapez-zip.zip');
+		fs.rmdir(`./shapez-${owner}-${repo}-${commitId}`, { recursive: true, force: true });
+		fs.unlink('./shapez-zip.zip');
 
 		// Update local config
 		fs.copyFileSync('./shapez/src/js/core/config.local.template.js', './shapez/src/js/core/config.local.js');
