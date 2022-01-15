@@ -166,7 +166,60 @@ async function createTypings() {
 						[x: string]: object
 					};
 					declare const shapez: any;
-					declare function registerMod(mod: () => typeof import("shapez/mods/mod").Mod): void;`;
+					declare function registerMod(mod: () => typeof import("shapez/mods/mod").Mod): void;
+
+					declare function assert(condition: boolean | object | string, ...errorMessage: string[]): void;
+					declare function assertAlways(condition: boolean | object | string, ...errorMessage: string[]): void;
+
+					declare interface FactoryTemplate<T> {
+						entries: Array<Class<T>>;
+						entryIds: Array<string>;
+						idToEntry: any;
+
+						getId(): string;
+						getAllIds(): Array<string>;
+						register(entry: Class<T>): void;
+						hasId(id: string): boolean;
+						findById(id: string): Class<T>;
+						getEntries(): Array<Class<T>>;
+						getNumEntries(): number;
+					}
+
+					declare interface SingletonFactoryTemplate<T> {
+						entries: Array<T>;
+						idToEntry: any;
+
+						getId(): string;
+						getAllIds(): Array<string>;
+						register(classHandle: Class<T>): void;
+						hasId(id: string): boolean;
+						findById(id: string): T;
+						findByClass(classHandle: Class<T>): T;
+						getEntries(): Array<T>;
+						getNumEntries(): number;
+					}
+
+					declare class TypedTrackedState<T> {
+						constructor(callbackMethod?: (value: T) => void, callbackScope?: any);
+
+						set(value: T, changeHandler?: (value: T) => void, changeScope?: any): void;
+
+						setSilent(value: any): void;
+						get(): T;
+					}
+
+					declare interface TypedSignal<T extends Array<any>> {
+						add(receiver: (...args: T) => /* STOP_PROPAGATION */ string | void, scope?: object);
+						addToTop(receiver: (...args: T) => /* STOP_PROPAGATION */ string | void, scope?: object);
+						remove(receiver: (...args: T) => /* STOP_PROPAGATION */ string | void);
+
+						dispatch(...args: T): /* STOP_PROPAGATION */ string | void;
+
+						removeAll();
+					}
+
+					declare type Layer = "regular" | "wires";
+					declare type ItemType = "shape" | "color" | "boolean";`;
 
 	types = prettier.format(types, {
 		parser: 'typescript',
@@ -355,7 +408,7 @@ export async function updateTypings(options) {
 	const tasks = new Listr([
 		{
 			title: 'Updating typings',
-			task: () => createTypings,
+			task: () => createTypings(),
 		},
 	]);
 
