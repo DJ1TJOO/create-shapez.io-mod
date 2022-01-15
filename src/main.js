@@ -9,6 +9,7 @@ import { execSync } from 'child_process';
 import { Octokit } from '@octokit/rest';
 import admZip from 'adm-zip';
 import url from 'url';
+import prettier from 'prettier';
 
 const octokit = new Octokit();
 const access = promisify(fs.access);
@@ -155,10 +156,23 @@ async function downloadShapez(options) {
 					declare const THEMES: {
 						[x: string]: object
 					};
+					declare const shapez: any;
 					declare function registerMod(mod: () => typeof import("shapez/mods/mod").Mod): void;`;
 
 		fs.writeFileSync('./src/js/types.d.ts', types);
 
+		prettier.format('./src/js/types.d.ts', {
+			trailingComma: 'es5',
+			tabWidth: 4,
+			semi: true,
+			singleQuote: false,
+			printWidth: 110,
+			useTabs: false,
+			quoteProps: 'consistent',
+			bracketSpacing: true,
+			arrowParens: 'avoid',
+			endOfLine: 'auto',
+		});
 		return;
 	} catch (error) {
 		console.log(error);
