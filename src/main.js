@@ -172,16 +172,16 @@ async function createTypings() {
 					declare function assertAlways(condition: boolean | object | string, ...errorMessage: string[]): void;
 
 					declare interface FactoryTemplate<T> {
-						entries: Array<Class<T>>;
+						entries: Array<T>;
 						entryIds: Array<string>;
 						idToEntry: any;
 
 						getId(): string;
 						getAllIds(): Array<string>;
-						register(entry: Class<T>): void;
+						register(entry: T): void;
 						hasId(id: string): boolean;
-						findById(id: string): Class<T>;
-						getEntries(): Array<Class<T>>;
+						findById(id: string): T;
+						getEntries(): Array<T>;
 						getNumEntries(): number;
 					}
 
@@ -191,10 +191,10 @@ async function createTypings() {
 
 						getId(): string;
 						getAllIds(): Array<string>;
-						register(classHandle: Class<T>): void;
+						register(classHandle: T): void;
 						hasId(id: string): boolean;
 						findById(id: string): T;
-						findByClass(classHandle: Class<T>): T;
+						findByClass(classHandle: T): T;
 						getEntries(): Array<T>;
 						getNumEntries(): number;
 					}
