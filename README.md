@@ -23,6 +23,7 @@ npx create-shapezio-mod
 ```sh
 npx create-shapezio-mod init
 npx create-shapezio-mod upgrade
+npx create-shapezio-mod typings
 ```
 
 ### Building the mod
