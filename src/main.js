@@ -160,6 +160,7 @@ async function downloadShapez(options) {
 					declare function registerMod(mod: () => typeof import("shapez/mods/mod").Mod): void;`;
 
 		types = prettier.format(types, {
+			parser: 'typescript',
 			trailingComma: 'es5',
 			tabWidth: 4,
 			semi: true,
