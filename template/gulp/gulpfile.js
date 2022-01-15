@@ -59,12 +59,16 @@ gulp.task("main.serve.shapez", function (cb) {
 
 gulp.task("main.serve.shapez.reload", function (cb) {
     if (fs.existsSync("../shapez/")) {
-        const main = path.relative(__dirname, path.join("../shapez", "src", "js", "main.js"));
-        fs.appendFileSync(main, "//gulp-reload!");
-        setTimeout(() => {
-            const mainFile = fs.readFileSync(main, "utf-8").replace(/[\n]?\/\/gulp-reload![\n]?/g, "");
-            fs.writeFileSync(main, mainFile);
-        }, 1000);
+        const mainPath = path.relative(__dirname, path.join("../shapez", "src", "js", "main.js"));
+        let mainFile = fs.readFileSync(mainPath, "utf-8");
+        const regex = /[\n]?\/\/gulp-reload![\n]?/g;
+        if (regex.test(mainFile)) {
+            mainFile = mainFile.replace(regex, "");
+        } else {
+            mainFile += "//gulp-reload!";
+        }
+
+        fs.writeFileSync(mainPath, mainFile);
     }
     return cb();
 });
@@ -127,12 +131,16 @@ function getGlobs(folder, customExtenstions = null) {
 }
 
 gulp.task("main.watch.trigger", function (cb) {
-    const main = path.relative(__dirname, path.join(folders.src, "js", "main.js"));
-    fs.appendFileSync(main, "//gulp-reload!");
-    setTimeout(() => {
-        const mainFile = fs.readFileSync(main, "utf-8").replace(/[\n]?\/\/gulp-reload![\n]?/g, "");
-        fs.writeFileSync(main, mainFile);
-    }, 1000);
+    const mainPath = path.relative(__dirname, path.join(folders.src, "js", "main.js"));
+    let mainFile = fs.readFileSync(mainPath, "utf-8");
+    const regex = /[\n]?\/\/gulp-reload![\n]?/g;
+    if (regex.test(mainFile)) {
+        mainFile = mainFile.replace(regex, "");
+    } else {
+        mainFile += "//gulp-reload!";
+    }
+
+    fs.writeFileSync(mainPath, mainFile);
 
     return cb();
 });
@@ -140,41 +148,31 @@ gulp.task("main.watch.trigger", function (cb) {
 gulp.task("main.watch.themes", function () {
     // Watch the source folder and reload when anything changed
     const src = getGlobs(folders.src, ["json"]);
-    return gulp.watch(src, gulp.series("main.watch.trigger", "main.serve.shapez.reload"));
+    return gulp.watch(src, gulp.series("main.watch.trigger"));
 });
 
 gulp.task("main.watch.translations", function () {
     // Watch the source folder and reload when anything changed
     const src = getGlobs(folders.src, ["yaml", "yml"]);
-    return gulp.watch(src, gulp.series("translations", "main.watch.trigger", "main.serve.shapez.reload"));
+    return gulp.watch(src, gulp.series("translations", "main.watch.trigger"));
 });
 
 gulp.task("main.watch.atlas", function () {
     // Watch the source folder and reload when anything changed
     const src = getGlobs(folders.src, ["png"]);
-    return gulp.watch(
-        src,
-        gulp.series("atlas.allOptimized", "main.watch.trigger", "main.serve.shapez.reload")
-    );
+    return gulp.watch(src, gulp.series("atlas.allOptimized", "main.watch.trigger"));
 });
 
 gulp.task("main.watch.scss", function () {
     // Watch the source folder and reload when anything changed
     const src = getGlobs(folders.src, ["scss"]);
-    return gulp.watch(src, gulp.series("css.dev", "main.watch.trigger", "main.serve.shapez.reload"));
+    return gulp.watch(src, gulp.series("css.dev", "main.watch.trigger"));
 });
 
 gulp.task("main.watch.js", function () {
     // Watch the source folder and reload when anything changed
-    const src = getGlobs(folders.src, ["js"]);
+    const src = getGlobs(folders.build, ["js"]);
     return gulp.watch(src, gulp.series("main.serve.shapez.reload"));
-});
-
-gulp.task("main.watch.shapezBuildFolder", function () {
-    // Watch the shapezBuildFolder and reload when anything changed
-    const src = getGlobs(folders.shapezBuild);
-
-    return gulp.watch(src, gulp.series("main.build.dev", "main.serve.shapez.reload"));
 });
 
 gulp.task(
@@ -184,8 +182,7 @@ gulp.task(
         "main.watch.js",
         "main.watch.atlas",
         "main.watch.translations",
-        "main.watch.themes",
-        "main.watch.shapezBuildFolder"
+        "main.watch.themes"
     )
 );
 

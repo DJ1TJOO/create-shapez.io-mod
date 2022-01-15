@@ -160,6 +160,14 @@ module.exports = ({
                     use: [
                         StringReplacePlugin.replace({
                             replacements: [
+                                ...(watch
+                                    ? []
+                                    : [
+                                          {
+                                              pattern: /[\n]?\/\/gulp-reload![\n]?/g,
+                                              replacement: () => "",
+                                          },
+                                      ]),
                                 {
                                     pattern:
                                         /import[ \n]*{([a-zA-Z0-9_$, \n]*)*}[ \n]*from[ \n]*[`|"|'](shapez\/[^]*?)[`|"|'];/gms,
