@@ -1,5 +1,6 @@
 import { init } from './init';
 import { upgrade } from './upgrade';
+import { typings } from './typings';
 import yargs from 'yargs/yargs';
 import fs from 'fs';
 
@@ -9,6 +10,8 @@ export async function cli(args) {
 		init(args.filter((x) => x !== 'init'));
 	} else if (argsNoBin[0] === 'upgrade') {
 		upgrade(args.filter((x) => x !== 'upgrade'));
+	} else if (argsNoBin[0] === 'typings') {
+		typings(args.filter((x) => x !== 'typings'));
 	} else {
 		if (!argsNoBin[0]) argsNoBin[0] = '--help';
 
@@ -19,6 +22,8 @@ export async function cli(args) {
 			.example('$0 init --shapez latest --git', 'Creates a new project with the latest shapez.io build and initializes git')
 			.command('upgrade', 'Changes the shapez.io build')
 			.example('$0 upgrade --shapezRepo https://github.com/DJ1TJOO/shapez.io/tree/modloader-try-again', 'Changes the shapez.io build to latest on a custom repo')
+			.command('typings', 'Changes the shapez.io build')
+			.example('$0 typings', 'Updates typings to the current shapez.io')
 
 			.alias('s', 'shapez')
 			.nargs('s', 1)

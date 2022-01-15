@@ -109,33 +109,42 @@ async function downloadShapez(options) {
 		config = config.replace(/(\/\/)?[\s]*externalModUrl:[^]*?"[^]*?",/gms, 'externalModUrl: "http://localhost:3010/mod.js",');
 		fs.writeFileSync('./shapez/src/js/core/config.local.js', config);
 
-		// Generate types.d.ts
-		execSync('tsc src/js/application.js --declaration --allowJs --emitDeclarationOnly --skipLibCheck --out types.js', {
-			cwd: './shapez',
-		});
+		createTypings();
+		return;
+	} catch (error) {
+		console.log(error);
+		return Promise.reject(new Error('Failed to download shapez.io build'));
+	}
+}
 
-		// Update types
-		let types = fs.readFileSync('./shapez/types.d.ts', 'utf-8');
-		types = types.replace(/declare module "([^]*?)"/gms, (matched, moduleName) => `declare module "shapez/${moduleName}"`);
-		types = types.replace(/import\("([^]*?)"\)/gms, (matched, moduleName, offset, string) => {
-			moduleName = moduleName.replace('.js', '');
-			if (moduleName.startsWith('.')) {
-				const closest = getClosest(string, offset, /declare module "([^]*?)"/gms);
+async function createTypings() {
+	// Generate types.d.ts
+	execSync('tsc src/js/application.js --declaration --allowJs --emitDeclarationOnly --skipLibCheck --out types.js', {
+		cwd: './shapez',
+	});
 
-				const parent = path.dirname(closest['0'].replace('declare module "', '').replace('"', ''));
-				const module = path.join(parent, moduleName).replace(/\\/g, '/');
+	// Update types
+	let types = fs.readFileSync('./shapez/types.d.ts', 'utf-8');
+	types = types.replace(/declare module "([^]*?)"/gms, (matched, moduleName) => `declare module "shapez/${moduleName}"`);
+	types = types.replace(/import\("([^]*?)"\)/gms, (matched, moduleName, offset, string) => {
+		moduleName = moduleName.replace('.js', '');
+		if (moduleName.startsWith('.')) {
+			const closest = getClosest(string, offset, /declare module "([^]*?)"/gms);
 
-				return `import("${module}")`;
-			} else {
-				return `import("shapez/${moduleName}")`;
-			}
-		});
-		types = types.replace(
-			/import {([^]*?)} from "([^]*?)";/gms,
-			(matched, imports, moduleName) => `import {${imports}} from "shapez/${moduleName.replace(/\.\.\//gms, '').replace('.js', '')}"`,
-		);
-		types = types.replace(/var/gms, 'let');
-		types += `declare const CSS_MAIN: string;
+			const parent = path.dirname(closest['0'].replace('declare module "', '').replace('"', ''));
+			const module = path.join(parent, moduleName).replace(/\\/g, '/');
+
+			return `import("${module}")`;
+		} else {
+			return `import("shapez/${moduleName}")`;
+		}
+	});
+	types = types.replace(
+		/import {([^]*?)} from "([^]*?)";/gms,
+		(matched, imports, moduleName) => `import {${imports}} from "shapez/${moduleName.replace(/\.\.\//gms, '').replace('.js', '')}"`,
+	);
+	types = types.replace(/var/gms, 'let');
+	types += `declare const CSS_MAIN: string;
 					declare const ATLASES: {
 						hq: {
 							src: string;
@@ -159,28 +168,23 @@ async function downloadShapez(options) {
 					declare const shapez: any;
 					declare function registerMod(mod: () => typeof import("shapez/mods/mod").Mod): void;`;
 
-		types = prettier.format(types, {
-			parser: 'typescript',
-			trailingComma: 'es5',
-			tabWidth: 4,
-			semi: true,
-			singleQuote: false,
-			printWidth: 110,
-			useTabs: false,
-			quoteProps: 'consistent',
-			bracketSpacing: true,
-			arrowParens: 'avoid',
-			endOfLine: 'auto',
-		});
+	types = prettier.format(types, {
+		parser: 'typescript',
+		trailingComma: 'es5',
+		tabWidth: 4,
+		semi: true,
+		singleQuote: false,
+		printWidth: 110,
+		useTabs: false,
+		quoteProps: 'consistent',
+		bracketSpacing: true,
+		arrowParens: 'avoid',
+		endOfLine: 'auto',
+	});
 
-		fs.writeFileSync('./src/js/types.d.ts', types, {
-			overwrite: true,
-		});
-		return;
-	} catch (error) {
-		console.log(error);
-		return Promise.reject(new Error('Failed to download shapez.io build'));
-	}
+	fs.writeFileSync('./src/js/types.d.ts', types, {
+		overwrite: true,
+	});
 }
 
 async function initGit(options) {
@@ -334,6 +338,24 @@ export async function upgradeProject(options) {
 					cwd: path.join(options.targetDirectory, 'shapez', 'gulp'),
 				}),
 			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
+		},
+	]);
+
+	await tasks.run();
+	console.log('%s Upgrade ready', chalk.green.bold('DONE'));
+	return true;
+}
+
+export async function updateTypings(options) {
+	options = {
+		...options,
+		targetDirectory: options.targetDirectory || process.cwd(),
+	};
+
+	const tasks = new Listr([
+		{
+			title: 'Updating typings',
+			task: () => createTypings,
 		},
 	]);
 
