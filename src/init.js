@@ -7,9 +7,13 @@ function parseArgumentsIntoOptions(rawArgs) {
 		{
 			'--git': Boolean,
 			'--install': Boolean,
+			'--shapez': String,
+			'--shapez-repo': String,
 			'--yes': Boolean,
 			'-g': '--git',
 			'-i': '--install',
+			'-s': '--shapez',
+			'-r': '--shapez-repo',
 			'-y': '--yes',
 		},
 		{
@@ -19,6 +23,8 @@ function parseArgumentsIntoOptions(rawArgs) {
 	return {
 		skipPrompts: args['--yes'] || false,
 		git: args['--git'] || false,
+		shapez: args['--shapez'] || false,
+		shapezRepo: args['--shapez-repo'] || false,
 		runInstall: args['--install'] || false,
 	};
 }
@@ -31,10 +37,16 @@ async function promptForMissingOptions(options) {
 	const defaultWebsite = '';
 	const defaultVesion = '1.0.0';
 	const defaultPackageManager = 'yarn';
+	const defaultShapez = 'latest';
+	const defaultShapezRepo = 'https://github.com/DJ1TJOO/shapez.io/tree/modloader-try-again';
+	const defaultInstallShapez = true;
 
 	if (options.skipPrompts) {
 		return {
 			...options,
+			shapezRepo: options.shapezRepo || defaultShapezRepo,
+			shapez: options.shapez || defaultShapez,
+			installShapez: options.shapez ? true : defaultInstallShapez,
 			name: defaultName,
 			website: defaultWebsite,
 			modId: defaultModId,
@@ -99,6 +111,22 @@ async function promptForMissingOptions(options) {
 		});
 	}
 
+	if (!options.shapez) {
+		questions.push({
+			type: 'confirm',
+			name: 'installShapez',
+			message: 'Download shapez.io build?',
+			default: defaultInstallShapez,
+		});
+
+		questions.push({
+			name: 'shapez',
+			message: 'Please input the shapez commit hash you want to use:',
+			default: defaultShapez,
+			when: (answers) => answers.installShapez,
+		});
+	}
+
 	if (!options.runInstall) {
 		questions.push({
 			type: 'confirm',
@@ -111,6 +139,9 @@ async function promptForMissingOptions(options) {
 	const answers = await inquirer.prompt(questions);
 	return {
 		...options,
+		shapezRepo: options.shapezRepo || defaultShapezRepo,
+		shapez: options.shapez || answers.shapez,
+		installShapez: options.shapez ? true : answers.installShapez,
 		runInstall: options.runInstall || answers.runInstall,
 		git: options.git || answers.git,
 		name: answers.name,

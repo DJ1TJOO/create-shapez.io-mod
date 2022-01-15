@@ -16,9 +16,17 @@ export async function cli(args) {
 			.usage('Usage: $0 <command> [options]')
 
 			.command('init', 'Creates a new shapez.io mod project')
-			.example('$0 init --git', 'Creates a new project and initializes git')
-			.command('upgrade', 'Update the build files')
-			.example('$0 upgrade --files', 'Updates the build files')
+			.example('$0 init --shapez latest --git', 'Creates a new project with the latest shapez.io build and initializes git')
+			.command('upgrade', 'Changes the shapez.io build')
+			.example('$0 upgrade --shapezRepo https://github.com/DJ1TJOO/shapez.io/tree/modloader-try-again', 'Changes the shapez.io build to latest on a custom repo')
+
+			.alias('s', 'shapez')
+			.nargs('s', 1)
+			.describe('s', 'Specify shapez.io commit')
+
+			.alias('r', 'shapezRepo')
+			.nargs('r', 1)
+			.describe('r', 'Specify repository to download from')
 
 			.alias('f', 'files')
 			.nargs('f', 1)
