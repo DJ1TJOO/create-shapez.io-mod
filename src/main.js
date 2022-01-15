@@ -60,54 +60,6 @@ async function updateTemplateFiles(options) {
 	return;
 }
 
-async function downloadShapez(options) {
-	const commit = options.shapez;
-	let [owner, repo, tree, branch] = options.shapezRepo.replace('https://github.com/', '').split('/');
-	if (tree !== 'tree' || !branch) {
-		branch = 'master';
-	}
-
-	try {
-		const lastCommit = await octokit.request('GET https://api.github.com/repos/{owner}/{repo}/commits/{branch}', {
-			owner,
-			repo,
-			branch: commit !== 'latest' ? commit : branch,
-		});
-		const artifactName = 'shapezio-mod-build-' + lastCommit.data.sha.substring(0, 7);
-
-		const artifacts = await octokit.request('GET https://api.github.com/repos/{owner}/{repo}/actions/artifacts', {
-			owner,
-			repo,
-		});
-		const artifactMeta = artifacts.data.artifacts.find((x) => x.name === artifactName);
-
-		const workflows = await octokit.request('GET https://api.github.com/repos/{owner}/{repo}/actions/workflows/ci-development.yml/runs', {
-			owner,
-			repo,
-		});
-		const workflowMeta = workflows.data.workflow_runs.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-
-		const artifact = await octokit.request(`GET https://nightly.link/{owner}/{repo}/suites/{check_suite_id}/artifacts/{artifact_id}`, {
-			owner,
-			repo,
-			check_suite_id: workflowMeta.check_suite_id,
-			artifact_id: artifactMeta.id,
-		});
-
-		fs.writeFileSync('./shapez-zip.zip', Buffer.from(artifact.data));
-
-		const zip = new admZip('./shapez-zip.zip');
-		zip.extractEntryTo('types.d.ts', './src/js/', true, true);
-		zip.extractAllTo('./shapez', true);
-
-		fs.unlinkSync('./shapez-zip.zip');
-
-		return;
-	} catch (error) {
-		return Promise.reject(new Error('Failed to download shapez.io build'));
-	}
-}
-
 async function initGit(options) {
 	try {
 		execSync('git init', {
@@ -144,11 +96,6 @@ export async function createProject(options) {
 		{
 			title: 'Updating project files',
 			task: () => updateTemplateFiles(options),
-		},
-		{
-			title: `Downloading${options.shapez === 'latest' ? ' latest' : ''} shapez.io build`,
-			task: () => downloadShapez(options),
-			skip: () => !options.installShapez,
 		},
 		{
 			title: 'Initialize git',
@@ -200,11 +147,6 @@ export async function upgradeProject(options) {
 			title: 'Copy new project files',
 			task: () => copyTemplateFiles(options),
 			skip: () => !options.updateFiles,
-		},
-		{
-			title: `Downloading${options.shapez === 'latest' ? ' latest' : ''} shapez.io build`,
-			task: () => downloadShapez(options),
-			skip: () => !options.installShapez,
 		},
 		{
 			title: 'Install dependencies',
