@@ -138,37 +138,38 @@ module.exports = ({
             }),
 
             new WebpackOnBuildPlugin(function (stats) {
-                if (!fs.existsSync("../mods")) {
-                    fs.mkdirSync("../mods", {
-                        recursive: true,
-                    });
-                }
-
-                const mods = [];
-                const modFiles = fs.readdirSync("../mods");
-                for (let i = 0; i < modFiles.length; i++) {
-                    const filename = modFiles[i];
-                    const ext = path.extname(filename);
-                    const readPath = path.join("../mods", filename);
-
-                    if (ext === ".js") {
-                        mods.push(fs.readFileSync(readPath, "utf8"));
+                if (watch) {
+                    if (!fs.existsSync("../mods")) {
+                        fs.mkdirSync("../mods", {
+                            recursive: true,
+                        });
                     }
-                }
 
-                console.log("Changed build");
-                setTimeout(() => {
-                    fs.appendFileSync(
-                        "../build/mod.js",
-                        mods
-                            .map(
-                                x => `\n(() => {
+                    const mods = [];
+                    const modFiles = fs.readdirSync("../mods");
+                    for (let i = 0; i < modFiles.length; i++) {
+                        const filename = modFiles[i];
+                        const ext = path.extname(filename);
+                        const readPath = path.join("../mods", filename);
+
+                        if (ext === ".js") {
+                            mods.push(fs.readFileSync(readPath, "utf8"));
+                        }
+                    }
+
+                    setTimeout(() => {
+                        fs.appendFileSync(
+                            "../build/mod.js",
+                            mods
+                                .map(
+                                    x => `\n(() => {
                         ${x}
                     })()`
-                            )
-                            .join()
-                    );
-                }, 1000);
+                                )
+                                .join()
+                        );
+                    }, 1000);
+                }
             }),
         ],
         module: {
