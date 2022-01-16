@@ -1,9 +1,9 @@
 {
-    "name": "mod_name",
+    "name": "mod_id",
     "version": "mod_version",
     "author": "mod_author",
     "website": "mod_website",
-    "license": "GPLV3",
+    "license": "GPL-3.0-only",
     "scripts": {
         "dev": "cd gulp && gulp",
         "devMod": "cd gulp && gulp main.serve.mod",

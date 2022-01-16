@@ -42,7 +42,7 @@ async function updateTemplateFiles(options) {
 	});
 
 	// Update files
-	packageFile = packageFile.replace(/mod_name/g, options.name);
+	packageFile = packageFile.replace(/mod_id/g, options.modId);
 	packageFile = packageFile.replace(/mod_version/g, options.version);
 	packageFile = packageFile.replace(/mod_author/g, options.author);
 	packageFile = packageFile.replace(/mod_website/g, options.website);
@@ -108,6 +108,11 @@ async function downloadShapez(options) {
 		let config = fs.readFileSync('./shapez/src/js/core/config.local.template.js', 'utf-8');
 		config = config.replace(/(\/\/)?[\s]*externalModUrl:[^]*?"[^]*?",/gms, 'externalModUrl: "http://localhost:3010/mod.js",');
 		fs.writeFileSync('./shapez/src/js/core/config.local.js', config);
+
+		// Fix getRevision
+		let buildUtils = fs.readFileSync('./shapez/gulp/buildutils.js', 'utf-8');
+		buildUtils = buildUtils.replace(/getRevision[^]*?},/gms, 'getRevision: () => "",');
+		fs.writeFileSync('./shapez/gulp/buildutils.js', buildUtils);
 
 		createTypings();
 		return;

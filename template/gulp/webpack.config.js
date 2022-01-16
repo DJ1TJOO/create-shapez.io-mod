@@ -4,7 +4,7 @@ const webpack = require("webpack");
 
 const CircularDependencyPlugin = require("circular-dependency-plugin");
 const StringReplacePlugin = require("string-replace-webpack-plugin");
-const WebpackOnBuildPlugin = require("on-build-webpack");
+const WrapperPlugin = require("wrapper-webpack-plugin");
 
 module.exports = ({
     watch = false,
@@ -14,13 +14,18 @@ module.exports = ({
     injectThemes = true,
 }) => {
     return {
-        mode: "development",
-        devtool: "cheap-source-map",
+        mode: watch ? "development" : "production",
+        ...(watch ? { devtool: "cheap-source-map" } : {}),
         entry: {
             "mod.js": [path.resolve(__dirname, "../src/js/main.js")],
         },
         watch,
         context: path.resolve(__dirname, ".."),
+        resolveLoader: {
+            alias: {
+                wrapper: path.join(__dirname, "./wrapper-loader.js"),
+            },
+        },
         plugins: [
             new StringReplacePlugin(),
             new webpack.DefinePlugin({
@@ -137,39 +142,33 @@ module.exports = ({
                 cwd: path.join(__dirname, "..", "src", "js"),
             }),
 
-            new WebpackOnBuildPlugin(function (stats) {
-                if (watch) {
-                    if (!fs.existsSync("../mods")) {
-                        fs.mkdirSync("../mods", {
-                            recursive: true,
-                        });
-                    }
-
-                    const mods = [];
-                    const modFiles = fs.readdirSync("../mods");
-                    for (let i = 0; i < modFiles.length; i++) {
-                        const filename = modFiles[i];
-                        const ext = path.extname(filename);
-                        const readPath = path.join("../mods", filename);
-
-                        if (ext === ".js") {
-                            mods.push(fs.readFileSync(readPath, "utf8"));
+            new WrapperPlugin({
+                test: /\.js$/,
+                footer: () => {
+                    if (watch) {
+                        if (!fs.existsSync("../mods")) {
+                            fs.mkdirSync("../mods", {
+                                recursive: true,
+                            });
                         }
-                    }
 
-                    setTimeout(() => {
-                        fs.appendFileSync(
-                            "../build/mod.js",
-                            mods
-                                .map(
-                                    x => `\n(() => {
-                        ${x}
-                    })()`
-                                )
-                                .join()
-                        );
-                    }, 1000);
-                }
+                        const mods = [];
+                        const modFiles = fs.readdirSync("../mods");
+                        for (let i = 0; i < modFiles.length; i++) {
+                            const filename = modFiles[i];
+                            const ext = path.extname(filename);
+                            const readPath = path.join("../mods", filename);
+
+                            if (ext === ".js") {
+                                mods.push(fs.readFileSync(readPath, "utf8"));
+                            }
+                        }
+
+                        return mods.map(x => `\n(() => {${x}})()`).join();
+                    } else {
+                        return "";
+                    }
+                },
             }),
         ],
         module: {
@@ -194,6 +193,23 @@ module.exports = ({
                     test: /\.js$/,
                     exclude: /node_modules/,
                     use: [
+                        {
+                            loader: "wrapper",
+                            options: {
+                                header: "(registerMod(() => {\n",
+                                footer: source => {
+                                    const matches = source.matchAll(
+                                        /class[\s]*([a-zA-Z0-9_-]*)[\s]*extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms
+                                    );
+
+                                    let variableName;
+                                    for (const match of matches) {
+                                        variableName = match[1];
+                                    }
+                                    return `\nreturn ${variableName};\n}))();`;
+                                },
+                            },
+                        },
                         StringReplacePlugin.replace({
                             replacements: [
                                 ...(watch
@@ -246,16 +262,6 @@ module.exports = ({
                             ],
                         }),
                     ],
-                },
-                {
-                    test: /\.worker\.js$/,
-                    use: {
-                        loader: "worker-loader",
-                        options: {
-                            fallback: false,
-                            inline: true,
-                        },
-                    },
                 },
                 {
                     test: /\.ya?ml$/,
