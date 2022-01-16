@@ -1,6 +1,6 @@
 import arg from 'arg';
 import inquirer from 'inquirer';
-import { createProject } from './main';
+import { createProject, getOptions } from './main';
 
 function parseArgumentsIntoOptions(rawArgs) {
 	const args = arg(
@@ -37,6 +37,7 @@ async function promptForMissingOptions(options) {
 	const defaultWebsite = '';
 	const defaultVesion = '1.0.0';
 	const defaultPackageManager = 'yarn';
+	const defaultGitClone = 'clone';
 	const defaultShapez = 'latest';
 	const defaultShapezRepo = 'https://github.com/tobspr/shapez.io/tree/modloader';
 	const defaultInstallShapez = true;
@@ -54,6 +55,7 @@ async function promptForMissingOptions(options) {
 			author: defaultAuthor,
 			version: defaultVesion,
 			packageManager: defaultPackageManager,
+			gitClone: defaultGitClone,
 		};
 	}
 
@@ -128,6 +130,16 @@ async function promptForMissingOptions(options) {
 			default: defaultShapez,
 			when: (answers) => answers.installShapez,
 		});
+
+		if (!settings.gitClone) {
+			questions.push({
+				type: 'list',
+				name: 'gitClone',
+				message: 'Git clone or download:',
+				choices: ['clone', 'download'],
+				default: defaultGitClone,
+			});
+		}
 	}
 
 	if (!options.runInstall) {
@@ -154,6 +166,7 @@ async function promptForMissingOptions(options) {
 		author: answers.author,
 		version: answers.version,
 		packageManager: answers.packageManager,
+		gitClone: answers.gitClone,
 	};
 }
 

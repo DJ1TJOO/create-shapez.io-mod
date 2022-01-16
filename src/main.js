@@ -5,7 +5,7 @@ import path from 'path';
 import { promisify } from 'util';
 import Listr from 'listr';
 import { projectInstall } from 'pkg-install';
-import { execSync } from 'child_process';
+import { exec, execSync } from 'child_process';
 import { Octokit } from '@octokit/rest';
 import admZip from 'adm-zip';
 import url from 'url';
@@ -90,6 +90,50 @@ async function getShapezCommit(options) {
 	return lastCommit.data.sha.substring(0, 7);
 }
 
+async function handleShapez(options) {
+	// Update local config
+	let config = fs.readFileSync('./shapez/src/js/core/config.local.template.js', 'utf-8');
+	config = config.replace(/(\/\/)?[\s]*externalModUrl:[^]*?"[^]*?",/gms, 'externalModUrl: "http://localhost:3010/mod.js",');
+	fs.writeFileSync('./shapez/src/js/core/config.local.js', config);
+
+	// Fix getRevision
+	let buildUtils = fs.readFileSync('./shapez/gulp/buildutils.js', 'utf-8');
+	buildUtils = buildUtils.replace(/getRevision[^]*?},/gms, 'getRevision: () => "",');
+	fs.writeFileSync('./shapez/gulp/buildutils.js', buildUtils);
+
+	createTypings(options);
+}
+
+async function cloneShapez(options) {
+	let [owner, repo, tree, branch] = options.shapezRepo.replace('https://github.com/', '').split('/');
+	await new Promise((res) => {
+		exec(
+			`git clone https://github.com/${owner}/${repo} ./shapez`,
+			{
+				cwd: options.targetDirectory,
+			},
+			res,
+		);
+	});
+	await updateClonedShapez(options);
+}
+
+async function updateClonedShapez(options) {
+	const commitId = await getShapezCommit(options);
+
+	await new Promise((res) => {
+		exec(
+			`git checkout ${commitId}`,
+			{
+				cwd: path.join(options.targetDirectory, 'shapez'),
+			},
+			res,
+		);
+	});
+
+	handleShapez(options);
+}
+
 async function downloadShapez(options) {
 	const commit = options.shapez;
 	let [owner, repo, tree, branch] = options.shapezRepo.replace('https://github.com/', '').split('/');
@@ -115,20 +159,10 @@ async function downloadShapez(options) {
 		await copy(`./shapez-${owner}-${repo}-${commitId}/${owner}-${repo}-${commitId}`, './shapez', {
 			clobber: true,
 		});
-		fs.rmdir(`./shapez-${owner}-${repo}-${commitId}`, { recursive: true, force: true }, () => {});
-		fs.unlink('./shapez-zip.zip', () => {});
+		new Promise((res) => fs.rmdir(`./shapez-${owner}-${repo}-${commitId}`, { recursive: true, force: true }, res));
+		new Promise((res) => fs.unlink('./shapez-zip.zip', res));
 
-		// Update local config
-		let config = fs.readFileSync('./shapez/src/js/core/config.local.template.js', 'utf-8');
-		config = config.replace(/(\/\/)?[\s]*externalModUrl:[^]*?"[^]*?",/gms, 'externalModUrl: "http://localhost:3010/mod.js",');
-		fs.writeFileSync('./shapez/src/js/core/config.local.js', config);
-
-		// Fix getRevision
-		let buildUtils = fs.readFileSync('./shapez/gulp/buildutils.js', 'utf-8');
-		buildUtils = buildUtils.replace(/getRevision[^]*?},/gms, 'getRevision: () => "",');
-		fs.writeFileSync('./shapez/gulp/buildutils.js', buildUtils);
-
-		createTypings();
+		await handleShapez(options);
 		return;
 	} catch (error) {
 		console.log(error);
@@ -136,10 +170,10 @@ async function downloadShapez(options) {
 	}
 }
 
-async function createTypings() {
+async function createTypings(options) {
 	// Generate types.d.ts
 	execSync('tsc src/js/application.js --declaration --allowJs --emitDeclarationOnly --skipLibCheck --out types.js', {
-		cwd: './shapez',
+		cwd: path.join(options.targetDirectory, 'shapez'),
 	});
 
 	// Update types
@@ -277,6 +311,7 @@ async function saveOptions(options) {
 	const shapez = getOptions(options.targetDirectory);
 
 	if (options.packageManager) shapez.packageManager = options.packageManager;
+	if (options.gitClone) shapez.gitClone = options.gitClone;
 	shapez.currentShapezCommit = await getShapezCommit(options);
 
 	fs.writeFileSync(path.join(options.targetDirectory, '.shapez'), JSON.stringify(shapez, null, 4));
@@ -330,7 +365,7 @@ export async function createProject(options) {
 		},
 		{
 			title: `Downloading${options.shapez === 'latest' ? ' latest' : ''} shapez.io build`,
-			task: () => downloadShapez(options),
+			task: () => (options.gitClone === 'clone' ? cloneShapez(options) : downloadShapez(options)),
 			skip: () => !options.installShapez,
 		},
 		{
@@ -405,7 +440,7 @@ export async function upgradeProject(options) {
 		},
 		{
 			title: `Downloading${options.shapez === 'latest' ? ' latest' : ''} shapez.io build`,
-			task: () => downloadShapez(options),
+			task: () => (options.gitClone === 'clone' ? updateClonedShapez(options) : downloadShapez(options)),
 			skip: () => !options.installShapez,
 		},
 		{

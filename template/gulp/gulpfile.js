@@ -12,6 +12,7 @@ const $ = require("gulp-load-plugins")({
 const baseDir = path.join(__dirname, "..");
 const folders = {
     src: path.join(baseDir, "src"),
+    mods: path.join(baseDir, "mods"),
     build: path.join(baseDir, "build"),
     shapezBuild: path.join(baseDir, "shapez"),
 };
@@ -167,6 +168,12 @@ gulp.task("main.watch.scss", function () {
     // Watch the source folder and reload when anything changed
     const src = getGlobs(folders.src, ["scss"]);
     return gulp.watch(src, gulp.series("css.dev", "main.watch.trigger"));
+});
+
+gulp.task("main.watch.mods", function () {
+    // Watch the mods folder and reload when anything changed
+    const src = getGlobs(folders.mods, ["js"]);
+    return gulp.watch(src, gulp.series("main.watch.trigger"));
 });
 
 gulp.task("main.watch.js", function () {

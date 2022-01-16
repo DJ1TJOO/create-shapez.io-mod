@@ -35,6 +35,7 @@ async function promptForMissingOptions(options) {
 	const defaultInstallShapez = true;
 	const defaultUpdateFiles = true;
 	const defaultPackageManager = 'yarn';
+	const defaultGitClone = 'clone';
 
 	if (options.skipPrompts) {
 		return {
@@ -43,9 +44,11 @@ async function promptForMissingOptions(options) {
 			installShapez: options.shapez || defaultInstallShapez,
 			updateFiles: options.updateFiles || defaultUpdateFiles,
 			packageManager: defaultPackageManager,
+			gitClone: defaultGitClone,
 		};
 	}
 
+	const settings = getOptions(process.cwd());
 	const questions = [];
 	if (!options.shapez) {
 		questions.push({
@@ -61,6 +64,16 @@ async function promptForMissingOptions(options) {
 			default: defaultShapez,
 			when: (answers) => answers.installShapez,
 		});
+
+		if (!settings.gitClone) {
+			questions.push({
+				type: 'list',
+				name: 'gitClone',
+				message: 'Git clone or download:',
+				choices: ['clone', 'download'],
+				default: defaultGitClone,
+			});
+		}
 	}
 
 	if (!options.updateFiles) {
@@ -80,7 +93,6 @@ async function promptForMissingOptions(options) {
 			default: true,
 		});
 
-		const settings = getOptions(process.cwd());
 		if (!settings.packageManager) {
 			questions.push({
 				type: 'list',
@@ -100,6 +112,7 @@ async function promptForMissingOptions(options) {
 		runInstall: options.runInstall || answers.runInstall,
 		updateFiles: options.updateFiles || answers.updateFiles,
 		packageManager: answers.packageManager,
+		gitClone: answers.gitClone,
 	};
 }
 
