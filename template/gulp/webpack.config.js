@@ -218,7 +218,7 @@ module.exports = ({
                         {
                             loader: "wrapper",
                             options: {
-                                header: "(() => {\nconst METADATA = MOD_METADATA;\n",
+                                header: "(() => {\n",
                                 footer: source => {
                                     const matches = source.matchAll(
                                         /class[\s]*([a-zA-Z0-9_-]*)[\s]*extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms
@@ -228,7 +228,7 @@ module.exports = ({
                                     for (const match of matches) {
                                         variableName = match[1];
                                     }
-                                    return `\n window.$shapez_registerMod(${variableName}, METADATA);\n})();`;
+                                    return `\nconst METADATA = MOD_METADATA;\nwindow.$shapez_registerMod(${variableName}, METADATA);\n})();`;
                                 },
                             },
                         },
