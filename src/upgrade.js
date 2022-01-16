@@ -1,6 +1,6 @@
 import arg from 'arg';
 import inquirer from 'inquirer';
-import { upgradeProject } from './main';
+import { getOptions, upgradeProject } from './main';
 
 function parseArgumentsIntoOptions(rawArgs) {
 	const args = arg(
@@ -80,13 +80,16 @@ async function promptForMissingOptions(options) {
 			default: true,
 		});
 
-		questions.push({
-			type: 'list',
-			name: 'packageManager',
-			message: 'Choose which package manager you want to use:',
-			choices: ['yarn', 'npm'],
-			default: defaultPackageManager,
-		});
+		const settings = getOptions(process.cwd());
+		if (!settings.packageManager) {
+			questions.push({
+				type: 'list',
+				name: 'packageManager',
+				message: 'Choose which package manager you want to use:',
+				choices: ['yarn', 'npm'],
+				default: defaultPackageManager,
+			});
+		}
 	}
 
 	const answers = await inquirer.prompt(questions);

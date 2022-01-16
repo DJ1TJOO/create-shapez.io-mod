@@ -94,13 +94,16 @@ async function promptForMissingOptions(options) {
 		default: defaultWebsite,
 	});
 
-	questions.push({
-		type: 'list',
-		name: 'packageManager',
-		message: 'Choose which package manager you want to use:',
-		choices: ['yarn', 'npm'],
-		default: defaultPackageManager,
-	});
+	const settings = getOptions(process.cwd());
+	if (!settings.packageManager) {
+		questions.push({
+			type: 'list',
+			name: 'packageManager',
+			message: 'Choose which package manager you want to use:',
+			choices: ['yarn', 'npm'],
+			default: defaultPackageManager,
+		});
+	}
 
 	if (!options.git) {
 		questions.push({

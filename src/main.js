@@ -74,6 +74,22 @@ function getClosest(string, offset, regex) {
 	return indices.reverse().find((x) => x.index <= offset);
 }
 
+async function getShapezCommit(options) {
+	const commit = options.shapez;
+	let [owner, repo, tree, branch] = options.shapezRepo.replace('https://github.com/', '').split('/');
+	if (tree !== 'tree' || !branch) {
+		branch = 'master';
+	}
+
+	const lastCommit = await octokit.request('GET https://api.github.com/repos/{owner}/{repo}/commits/{branch}', {
+		owner,
+		repo,
+		branch: commit !== 'latest' ? commit : branch,
+	});
+
+	return lastCommit.data.sha.substring(0, 7);
+}
+
 async function downloadShapez(options) {
 	const commit = options.shapez;
 	let [owner, repo, tree, branch] = options.shapezRepo.replace('https://github.com/', '').split('/');
@@ -82,13 +98,9 @@ async function downloadShapez(options) {
 	}
 
 	try {
-		const lastCommit = await octokit.request('GET https://api.github.com/repos/{owner}/{repo}/commits/{branch}', {
-			owner,
-			repo,
-			branch: commit !== 'latest' ? commit : branch,
-		});
+		const commitId = await getShapezCommit(options);
 
-		const commitId = lastCommit.data.sha.substring(0, 7);
+		if (commitId === options.currentShapezCommit) return;
 
 		const download = await octokit.repos.downloadZipballArchive({
 			owner,
@@ -261,11 +273,40 @@ async function initGit(options) {
 	}
 }
 
-export async function createProject(options) {
-	options = {
+async function saveOptions(options) {
+	const shapez = getOptions(options.targetDirectory);
+
+	if (options.packageManager) shapez.packageManager = options.packageManager;
+	shapez.currentShapezCommit = await getShapezCommit(options);
+
+	fs.writeFileSync(path.join(options.targetDirectory, '.shapez'), JSON.stringify(shapez, null, 4));
+}
+
+function parseOptions(options) {
+	const targetDirectory = options.targetDirectory || process.cwd();
+
+	const shapez = getOptions(targetDirectory);
+
+	return {
+		...shapez,
 		...options,
-		targetDirectory: options.targetDirectory || process.cwd(),
+		targetDirectory,
 	};
+}
+
+export function getOptions(targetDirectory) {
+	const shapezPath = path.join(targetDirectory, '.shapez');
+
+	let shapez = {};
+	if (fs.existsSync(shapezPath)) {
+		shapez = JSON.parse(fs.readFileSync(shapezPath));
+	}
+
+	return shapez;
+}
+
+export async function createProject(options) {
+	options = parseOptions(options);
 
 	const pathName = url.fileURLToPath(import.meta.url);
 	const templateDir = path.resolve(pathName, '../../template/');
@@ -333,6 +374,10 @@ export async function createProject(options) {
 				}),
 			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
 		},
+		{
+			title: 'Saving options',
+			task: () => saveOptions(options),
+		},
 	]);
 
 	await tasks.run();
@@ -341,10 +386,7 @@ export async function createProject(options) {
 }
 
 export async function upgradeProject(options) {
-	options = {
-		...options,
-		targetDirectory: options.targetDirectory || process.cwd(),
-	};
+	options = parseOptions(options);
 
 	const pathName = url.fileURLToPath(import.meta.url);
 	const templateDir = path.resolve(pathName, '../../template/');
@@ -401,6 +443,10 @@ export async function upgradeProject(options) {
 					cwd: path.join(options.targetDirectory, 'shapez', 'gulp'),
 				}),
 			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
+		},
+		{
+			title: 'Saving options',
+			task: () => saveOptions(options),
 		},
 	]);
 
