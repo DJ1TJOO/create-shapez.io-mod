@@ -43,6 +43,8 @@ async function updateTemplateFiles(options) {
 
 	// Update files
 	packageFile = packageFile.replace(/mod_id/g, options.modId);
+	packageFile = packageFile.replace(/mod_name/g, options.name);
+	packageFile = packageFile.replace(/mod_description/g, options.description);
 	packageFile = packageFile.replace(/mod_version/g, options.version);
 	packageFile = packageFile.replace(/mod_author/g, options.author);
 	packageFile = packageFile.replace(/mod_website/g, options.website);

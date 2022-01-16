@@ -2,7 +2,11 @@
     "name": "mod_id",
     "version": "mod_version",
     "author": "mod_author",
-    "website": "mod_website",
+    "mod-info": {
+        "name": "mod_name",
+        "website": "mod_website",
+        "description": "mod_descripiton"
+    },
     "license": "GPL-3.0-only",
     "scripts": {
         "dev": "cd gulp && gulp",
