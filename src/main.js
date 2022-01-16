@@ -148,7 +148,7 @@ async function createTypings() {
 		/import {([^]*?)} from "([^]*?)";/gms,
 		(matched, imports, moduleName) => `import {${imports}} from "shapez/${moduleName.replace(/\.\.\//gms, '').replace('.js', '')}"`,
 	);
-	types = types.replace(/var[\s]*[^]*?;/gms, 'let');
+	types = types.replace(/var _default/gms, 'let _default');
 	types += `declare const CSS_MAIN: string;
 					declare const ATLASES: {
 						hq: {
