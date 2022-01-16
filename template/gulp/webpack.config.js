@@ -218,6 +218,7 @@ module.exports = ({
                         {
                             loader: "wrapper",
                             options: {
+                                test: /class[\s]*([a-zA-Z0-9_-]*)[\s]*extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
                                 footer: source => {
                                     const matches = source.matchAll(
                                         /class[\s]*([a-zA-Z0-9_-]*)[\s]*extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms
