@@ -173,7 +173,10 @@ async function createTypings() {
 						[x: string]: object
 					};
 					declare const shapez: any;
-					declare function registerMod(mod: () => typeof import("shapez/mods/mod").Mod): void;
+					declare function $shapez_registerMod(
+						mod: typeof import("shapez/mods/mod").Mod,
+						meta: import("shapez/mods/modloader").ModMetadata
+					): void;
 
 					declare function assert(condition: boolean | object | string, ...errorMessage: string[]): void;
 					declare function assertAlways(condition: boolean | object | string, ...errorMessage: string[]): void;

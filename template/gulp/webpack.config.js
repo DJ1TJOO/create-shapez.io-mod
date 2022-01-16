@@ -29,6 +29,28 @@ module.exports = ({
         plugins: [
             new StringReplacePlugin(),
             new webpack.DefinePlugin({
+                MOD_METADATA: webpack.DefinePlugin.runtimeValue(
+                    function () {
+                        let info = {};
+                        try {
+                            const json = JSON.parse(
+                                fs.readFileSync(path.resolve(__dirname, "../package.json"), {
+                                    encoding: "utf-8",
+                                })
+                            );
+                            info = {
+                                name: `"${json["mod-info"].name}"`,
+                                description: `"${json["mod-info"].description}"`,
+                                website: `"${json["mod-info"].webiste}"`,
+                                id: `"${json.name}"`,
+                                version: `"${json.version}"`,
+                                author: `"${json.author}"`,
+                            };
+                        } catch (error) {}
+                        return info;
+                    },
+                    ["../package.json"]
+                ),
                 CSS_MAIN: webpack.DefinePlugin.runtimeValue(
                     function () {
                         let css = "";
@@ -196,7 +218,7 @@ module.exports = ({
                         {
                             loader: "wrapper",
                             options: {
-                                header: "(registerMod(() => {\n",
+                                header: "(() => {\nconst METADATA = MOD_METADATA;\n",
                                 footer: source => {
                                     const matches = source.matchAll(
                                         /class[\s]*([a-zA-Z0-9_-]*)[\s]*extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms
@@ -206,7 +228,7 @@ module.exports = ({
                                     for (const match of matches) {
                                         variableName = match[1];
                                     }
-                                    return `\nreturn ${variableName};\n}))();`;
+                                    return `\n window.$shapez_registerMod(${variableName}, METADATA);\n})();`;
                                 },
                             },
                         },
