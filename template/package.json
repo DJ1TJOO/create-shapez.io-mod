@@ -10,8 +10,8 @@
     "license": "GPL-3.0-only",
     "scripts": {
         "dev": "cd gulp && yarn gulp",
-        "devMod": "cd gulp && yarn gulp main.serve.mod",
-        "build": "cd gulp && yarn gulp main.build",
+        "devMod": "cd gulp && yarn gulp main.watch.mod",
+        "devStandalone": "cd gulp && yarn gulp main.watch.standalone",
         "tslint": "cd src/js && yarn tsc",
         "lint": "yarn eslint src/js",
         "prettier-all": "yarn prettier --write src/**/*.* && yarn prettier --write gulp/**/*.*"

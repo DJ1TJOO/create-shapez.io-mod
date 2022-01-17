@@ -92,15 +92,20 @@ async function getShapezCommit(options) {
 }
 
 async function handleShapez(options) {
+	// Removed optional dependencies
+	let electronPackage = JSON.parse(fs.readFileSync(path.join(options.targetDirectory, 'shapez/electron/package.json'), 'utf-8'));
+	electronPackage.optionalDependencies = {};
+	fs.writeFileSync(path.join(options.targetDirectory, 'shapez/electron/package.json'), JSON.stringify(electronPackage, null, 4));
+
 	// Update local config
-	let config = fs.readFileSync('./shapez/src/js/core/config.local.template.js', 'utf-8');
+	let config = fs.readFileSync(path.join(options.targetDirectory, 'shapez/src/js/core/config.local.template.js'), 'utf-8');
 	config = config.replace(/(\/\/)?[\s]*externalModUrl:[^]*?"[^]*?",/gms, 'externalModUrl: "http://localhost:3010/mod.js",');
-	fs.writeFileSync('./shapez/src/js/core/config.local.js', config);
+	fs.writeFileSync(path.join(options.targetDirectory, 'shapez/src/js/core/config.local.js'), config);
 
 	// Fix getRevision
-	let buildUtils = fs.readFileSync('./shapez/gulp/buildutils.js', 'utf-8');
+	let buildUtils = fs.readFileSync(path.join(options.targetDirectory, './shapez/gulp/buildutils.js'), 'utf-8');
 	buildUtils = buildUtils.replace(/getRevision[^]*?},/gms, 'getRevision: () => "",');
-	fs.writeFileSync('./shapez/gulp/buildutils.js', buildUtils);
+	fs.writeFileSync(path.join(options.targetDirectory, 'shapez/gulp/buildutils.js'), buildUtils);
 
 	createTypings(options);
 }
@@ -429,6 +434,15 @@ export async function createProject(options) {
 			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
 		},
 		{
+			title: 'Install electron shapez dependencies',
+			task: () =>
+				projectInstall({
+					prefer: options.packageManager,
+					cwd: path.join(options.targetDirectory, 'shapez', 'electron'),
+				}),
+			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
+		},
+		{
 			title: 'Saving options',
 			task: () => saveOptions(options),
 		},
@@ -496,6 +510,15 @@ export async function upgradeProject(options) {
 				projectInstall({
 					prefer: options.packageManager,
 					cwd: path.join(options.targetDirectory, 'shapez', 'gulp'),
+				}),
+			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
+		},
+		{
+			title: 'Install electron shapez dependencies',
+			task: () =>
+				projectInstall({
+					prefer: options.packageManager,
+					cwd: path.join(options.targetDirectory, 'shapez', 'electron'),
 				}),
 			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
 		},

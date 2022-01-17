@@ -58,6 +58,52 @@ gulp.task("main.serve.shapez", function (cb) {
     return cb();
 });
 
+gulp.task("main.serve.shapez.standalone", function (cb) {
+    if (fs.existsSync("../shapez/")) {
+        const shapez = exec("yarn devStandalone", {
+            cwd: "../shapez/",
+        });
+        shapez.stdout.setEncoding("utf8");
+        shapez.stdout.on("data", function (data) {
+            console.log("shapez log: " + data);
+        });
+
+        shapez.stderr.setEncoding("utf8");
+        shapez.stderr.on("data", function (data) {
+            console.log("shapez error: " + data);
+        });
+
+        shapez.on("close", function (code) {
+            console.log("closing shapez");
+        });
+    }
+
+    return cb();
+});
+
+gulp.task("main.serve.shapez.electron", function (cb) {
+    if (fs.existsSync("../shapez/")) {
+        const shapez = exec("yarn startDev", {
+            cwd: "../shapez/electron/",
+        });
+        shapez.stdout.setEncoding("utf8");
+        shapez.stdout.on("data", function (data) {
+            console.log("shapez log: " + data);
+        });
+
+        shapez.stderr.setEncoding("utf8");
+        shapez.stderr.on("data", function (data) {
+            console.log("shapez error: " + data);
+        });
+
+        shapez.on("close", function (code) {
+            console.log("closing shapez");
+        });
+    }
+
+    return cb();
+});
+
 gulp.task("main.serve.shapez.reload", function (cb) {
     if (fs.existsSync("../shapez/")) {
         const mainPath = path.relative(__dirname, path.join("../shapez", "src", "js", "main.js"));
@@ -96,6 +142,10 @@ gulp.task("main.serve.mod", function (cb) {
 });
 
 gulp.task("main.serve", gulp.series("main.serve.shapez", "main.serve.mod"));
+gulp.task(
+    "main.serve.standalone",
+    gulp.series("main.serve.shapez.standalone", "main.serve.shapez.electron", "main.serve.mod")
+);
 
 // Js
 const js = require("./js");
@@ -199,6 +249,19 @@ gulp.task(
     gulp.parallel(
         "main.build.dev",
         "main.serve.mod",
+        "main.watch.scss",
+        "main.watch.translations",
+        "main.watch.themes",
+        "main.watch.js",
+        "main.watch.atlas"
+    )
+);
+
+gulp.task(
+    "main.watch.standalone",
+    gulp.series(
+        "main.build.dev",
+        "main.serve.standalone",
         "main.watch.scss",
         "main.watch.translations",
         "main.watch.themes",
