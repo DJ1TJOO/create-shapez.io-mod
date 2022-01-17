@@ -159,8 +159,8 @@ async function downloadShapez(options) {
 		await copy(`./shapez-${owner}-${repo}-${commitId}/${owner}-${repo}-${commitId}`, './shapez', {
 			clobber: true,
 		});
-		new Promise((res) => fs.rmdir(`./shapez-${owner}-${repo}-${commitId}`, { recursive: true, force: true }, res));
-		new Promise((res) => fs.unlink('./shapez-zip.zip', res));
+		await new Promise((res) => fs.rmdir(`./shapez-${owner}-${repo}-${commitId}`, { recursive: true, force: true }, res));
+		await new Promise((res) => fs.unlink('./shapez-zip.zip', res));
 
 		await handleShapez(options);
 		return;
@@ -172,9 +172,15 @@ async function downloadShapez(options) {
 
 async function createTypings(options) {
 	// Generate types.d.ts
-	execSync('tsc src/js/application.js --declaration --allowJs --emitDeclarationOnly --skipLibCheck --out types.js', {
-		cwd: path.join(options.targetDirectory, 'shapez'),
-	});
+	await new Promise((res) =>
+		exec(
+			'tsc src/js/application.js --declaration --allowJs --emitDeclarationOnly --skipLibCheck --out types.js',
+			{
+				cwd: path.join(options.targetDirectory, 'shapez'),
+			},
+			res,
+		),
+	);
 
 	// Update types
 	let types = fs.readFileSync('./shapez/types.d.ts', 'utf-8');
@@ -417,6 +423,7 @@ export async function createProject(options) {
 
 	await tasks.run();
 	console.log('%s Project ready', chalk.green.bold('DONE'));
+	console.log('%s You can now use %s or %s', chalk.bgBlueBright.white.bold(' INFO '), chalk.green.bold('yarn dev'), chalk.green.bold('yarn build'));
 	return true;
 }
 
@@ -487,6 +494,7 @@ export async function upgradeProject(options) {
 
 	await tasks.run();
 	console.log('%s Upgrade ready', chalk.green.bold('DONE'));
+	console.log('%s You can now use %s or %s', chalk.bgBlueBright.white.bold(' INFO '), chalk.green.bold('yarn dev'), chalk.green.bold('yarn build'));
 	return true;
 }
 
@@ -501,6 +509,7 @@ export async function updateTypings(options) {
 	]);
 
 	await tasks.run();
-	console.log('%s Upgrade ready', chalk.green.bold('DONE'));
+	console.log('%s Typings ready', chalk.green.bold('DONE'));
+
 	return true;
 }
