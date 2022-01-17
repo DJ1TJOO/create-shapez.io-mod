@@ -404,7 +404,6 @@ export async function createProject(options) {
 					prefer: options.packageManager,
 					cwd: options.targetDirectory,
 				}),
-			skip: () => (!options.runInstall ? 'Pass --install to automatically install dependencies' : undefined),
 		},
 		{
 			title: 'Install gulp dependencies',
@@ -413,7 +412,6 @@ export async function createProject(options) {
 					prefer: options.packageManager,
 					cwd: path.join(options.targetDirectory, 'gulp'),
 				}),
-			skip: () => (!options.runInstall ? 'Pass --install to automatically install dependencies' : undefined),
 		},
 		{
 			title: 'Install shapez dependencies',
@@ -422,7 +420,7 @@ export async function createProject(options) {
 					prefer: options.packageManager,
 					cwd: path.join(options.targetDirectory, 'shapez'),
 				}),
-			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
+			skip: () => (!options.runInstall || !options.installShapez ? 'Not installing shapez' : undefined),
 		},
 		{
 			title: 'Install gulp shapez dependencies',
@@ -431,7 +429,7 @@ export async function createProject(options) {
 					prefer: options.packageManager,
 					cwd: path.join(options.targetDirectory, 'shapez', 'gulp'),
 				}),
-			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
+			skip: () => (!options.runInstall || !options.installShapez ? 'Not installing shapez' : undefined),
 		},
 		{
 			title: 'Install electron shapez dependencies',
@@ -440,7 +438,7 @@ export async function createProject(options) {
 					prefer: options.packageManager,
 					cwd: path.join(options.targetDirectory, 'shapez', 'electron'),
 				}),
-			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
+			skip: () => (!options.runInstall || !options.installShapez ? 'Not installing shapez' : undefined),
 		},
 		{
 			title: 'Saving options',
@@ -484,7 +482,6 @@ export async function upgradeProject(options) {
 					prefer: options.packageManager,
 					cwd: options.targetDirectory,
 				}),
-			skip: () => (!options.runInstall ? 'Pass --install to automatically install dependencies' : undefined),
 		},
 		{
 			title: 'Install gulp dependencies',
@@ -493,7 +490,6 @@ export async function upgradeProject(options) {
 					prefer: options.packageManager,
 					cwd: path.join(options.targetDirectory, 'gulp'),
 				}),
-			skip: () => (!options.runInstall ? 'Pass --install to automatically install dependencies' : undefined),
 		},
 		{
 			title: 'Install shapez dependencies',
@@ -502,7 +498,7 @@ export async function upgradeProject(options) {
 					prefer: options.packageManager,
 					cwd: path.join(options.targetDirectory, 'shapez'),
 				}),
-			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
+			skip: () => (!options.runInstall || !options.installShapez ? 'Not installing shapez' : undefined),
 		},
 		{
 			title: 'Install gulp shapez dependencies',
@@ -511,7 +507,7 @@ export async function upgradeProject(options) {
 					prefer: options.packageManager,
 					cwd: path.join(options.targetDirectory, 'shapez', 'gulp'),
 				}),
-			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
+			skip: () => (!options.runInstall || !options.installShapez ? 'Not installing shapez' : undefined),
 		},
 		{
 			title: 'Install electron shapez dependencies',
@@ -520,7 +516,7 @@ export async function upgradeProject(options) {
 					prefer: options.packageManager,
 					cwd: path.join(options.targetDirectory, 'shapez', 'electron'),
 				}),
-			skip: () => (!options.runInstall || !options.installShapez ? 'Pass --install to automatically install dependencies' : undefined),
+			skip: () => (!options.runInstall || !options.installShapez ? 'Not installing shapez' : undefined),
 		},
 		{
 			title: 'Saving options',
