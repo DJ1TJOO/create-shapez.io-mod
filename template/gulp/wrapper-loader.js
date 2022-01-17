@@ -1,7 +1,7 @@
 module.exports = function (source, map) {
     this.cacheable();
 
-    if (!this.query.test.test(source)) {
+    if (this.query.test && !this.query.test.test(source)) {
         return this.callback(null, source, map);
     }
 
