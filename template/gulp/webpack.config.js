@@ -221,7 +221,7 @@ module.exports = ({
                                 test: /class[\s]*([a-zA-Z0-9_-]*)[\s]*extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
                                 footer: source => {
                                     const matches = source.matchAll(
-                                        /class[\s]*([a-zA-Z0-9_-]*)[\s]*extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms
+                                        /class[\s]*([a-zA-Z0-9_-]*)[\s]*extends[^]*?Mod[\s]*{[^]*?init[^]*?\([^]*?\)[^]*?{/gms
                                     );
 
                                     let variableName;
