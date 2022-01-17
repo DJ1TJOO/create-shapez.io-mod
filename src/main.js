@@ -319,7 +319,7 @@ async function saveOptions(options) {
 
 	if (options.packageManager) shapez.packageManager = options.packageManager;
 	if (options.gitClone) shapez.gitClone = options.gitClone;
-	shapez.currentShapezCommit = await getShapezCommit(options);
+	shapez.currentShapezCommit = options.installShapez ? await getShapezCommit(options) : options.currentShapezCommit;
 
 	fs.writeFileSync(path.join(options.targetDirectory, '.shapez'), JSON.stringify(shapez, null, 4));
 }
