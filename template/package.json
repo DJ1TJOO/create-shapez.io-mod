@@ -12,9 +12,9 @@
         "dev": "cd gulp && yarn gulp",
         "devMod": "cd gulp && yarn gulp main.serve.mod",
         "build": "cd gulp && yarn gulp main.build",
-        "tslint": "cd src/js && tsc",
-        "lint": "eslint src/js",
-        "prettier-all": "prettier --write src/**/*.* && prettier --write gulp/**/*.*"
+        "tslint": "cd src/js && yarn tsc",
+        "lint": "yarn eslint src/js",
+        "prettier-all": "yarn prettier --write src/**/*.* && yarn prettier --write gulp/**/*.*"
     },
     "private": true,
     "dependencies": {
