@@ -14,7 +14,7 @@ module.exports = ({
     injectThemes = true,
 }) => {
     return {
-        mode: watch ? "development" : "production",
+        mode: "development",
         ...(watch ? { devtool: "cheap-source-map" } : {}),
         entry: {
             "mod.js": [path.resolve(__dirname, "../src/js/main.js")],
