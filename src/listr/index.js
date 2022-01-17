@@ -7,16 +7,6 @@ const cliTruncate = require('cli-truncate');
 const stripAnsi = require('strip-ansi');
 const utils = require('./utils');
 
-const cliProgress = require('cli-progress');
-
-// create a new progress bar instance and use shades_classic theme
-// const bar1 = new cliProgress.SingleBar({
-// 	format: chalk.bgGreen.white(' {percentage}% ') + chalk.green('{bar}'),
-// 	barCompleteChar: ,
-// 	barIncompleteChar: ' ',
-// 	hideCursor: true,
-// });
-
 const getBar = (total, completed) => {
 	const barCompleteString = '\u2588';
 	const barIncompleteString = ' ';
