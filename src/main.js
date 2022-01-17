@@ -10,6 +10,7 @@ import { Octokit } from '@octokit/rest';
 import admZip from 'adm-zip';
 import url from 'url';
 import prettier from 'prettier';
+import UpdateRenderer from './listr';
 
 const octokit = new Octokit();
 const access = promisify(fs.access);
@@ -329,8 +330,10 @@ function parseOptions(options) {
 	const shapez = getOptions(targetDirectory);
 
 	return {
-		...shapez,
 		...options,
+		packageManager: options.packageManager || shapez.packageManager,
+		gitClone: options.gitClone || shapez.gitClone,
+		currentShapezCommit: shapez.currentShapezCommit,
 		targetDirectory,
 	};
 }
@@ -501,12 +504,17 @@ export async function upgradeProject(options) {
 export async function updateTypings(options) {
 	options = parseOptions(options);
 
-	const tasks = new Listr([
+	const tasks = new Listr(
+		[
+			{
+				title: 'Updating typings',
+				task: () => createTypings(options),
+			},
+		],
 		{
-			title: 'Updating typings',
-			task: () => createTypings(options),
+			renderer: UpdateRenderer,
 		},
-	]);
+	);
 
 	await tasks.run();
 	console.log('%s Typings ready', chalk.green.bold('DONE'));
