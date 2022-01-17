@@ -218,10 +218,10 @@ module.exports = ({
                         {
                             loader: "wrapper",
                             options: {
-                                test: /class[\s]*([a-zA-Z0-9_-]*)[\s]*extends[^]*?Mod[\s]*{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
+                                test: /class[\s]*?([a-zA-Z0-9_-]*?)[\s]*?extends[\s]*?Mod[\s]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
                                 footer: source => {
                                     const matches = source.matchAll(
-                                        /class[\s]*([a-zA-Z0-9_-]*)[\s]*extends[^]*?Mod[\s]*{[^]*?init[^]*?\([^]*?\)[^]*?{/gms
+                                        /class[\s]*?([a-zA-Z0-9_-]*?)[\s]*?extends[\s]*?Mod[\s]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms
                                     );
 
                                     let variableName;
