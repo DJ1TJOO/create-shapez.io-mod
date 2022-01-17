@@ -124,7 +124,17 @@ async function updateClonedShapez(options) {
 
 	await new Promise((res) => {
 		exec(
-			`git checkout ${commitId}`,
+			`git fetch`,
+			{
+				cwd: path.join(options.targetDirectory, 'shapez'),
+			},
+			res,
+		);
+	});
+
+	await new Promise((res) => {
+		exec(
+			`git checkout -f ${commitId}`,
 			{
 				cwd: path.join(options.targetDirectory, 'shapez'),
 			},
