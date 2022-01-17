@@ -218,17 +218,22 @@ module.exports = ({
                         {
                             loader: "wrapper",
                             options: {
-                                test: /class[\s]*?([a-zA-Z0-9_-]*?)[\s]*?extends[\s]*?Mod[\s]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
                                 footer: source => {
-                                    const matches = source.matchAll(
-                                        /class[\s]*?([a-zA-Z0-9_-]*?)[\s]*?extends[\s]*?Mod[\s]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms
-                                    );
+                                    const matches = [
+                                        ...source.matchAll(
+                                            /class[\s]*?([a-zA-Z0-9_-]*?)[\s]*?extends[\s]*?Mod[\s]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms
+                                        ),
+                                    ];
 
-                                    let variableName;
-                                    for (const match of matches) {
-                                        variableName = match[1];
+                                    if (matches.length > 0) {
+                                        let variableName;
+                                        for (const match of matches) {
+                                            variableName = match[1];
+                                        }
+                                        return `\nconst METADATA = MOD_METADATA;\nwindow.$shapez_registerMod(${variableName}, METADATA);`;
+                                    } else {
+                                        return;
                                     }
-                                    return `\nconst METADATA = MOD_METADATA;\nwindow.$shapez_registerMod(${variableName}, METADATA);`;
                                 },
                             },
                         },
