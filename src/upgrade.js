@@ -8,12 +8,12 @@ function parseArgumentsIntoOptions(rawArgs) {
 			'--files': Boolean,
 			'--shapez': String,
 			'--shapez-repo': String,
-			'--install': Boolean,
+			'--no-install': Boolean,
 			'--yes': Boolean,
 			'-f': '--files',
 			'-s': '--shapez',
 			'-r': '--shapez-repo',
-			'-i': '--install',
+			'-n': '--no-install',
 			'-y': '--yes',
 		},
 		{
@@ -25,7 +25,7 @@ function parseArgumentsIntoOptions(rawArgs) {
 		updateFiles: args['--files'] || false,
 		shapez: args['--shapez'] || false,
 		shapezRepo: args['--shapez-repo'] || false,
-		runInstall: args['--install'] || false,
+		runInstall: !args['--no-install'],
 	};
 }
 
@@ -85,23 +85,14 @@ async function promptForMissingOptions(options) {
 		});
 	}
 
-	if (!options.runInstall) {
+	if (options.runInstall && !settings.packageManager) {
 		questions.push({
-			type: 'confirm',
-			name: 'runInstall',
-			message: 'Install all modules?',
-			default: true,
+			type: 'list',
+			name: 'packageManager',
+			message: 'Choose which package manager you want to use:',
+			choices: ['yarn', 'npm'],
+			default: defaultPackageManager,
 		});
-
-		if (!settings.packageManager) {
-			questions.push({
-				type: 'list',
-				name: 'packageManager',
-				message: 'Choose which package manager you want to use:',
-				choices: ['yarn', 'npm'],
-				default: defaultPackageManager,
-			});
-		}
 	}
 
 	const answers = await inquirer.prompt(questions);

@@ -491,15 +491,12 @@ export async function upgradeProject(options) {
 }
 
 export async function updateTypings(options) {
-	options = {
-		...options,
-		targetDirectory: options.targetDirectory || process.cwd(),
-	};
+	options = parseOptions(options);
 
 	const tasks = new Listr([
 		{
 			title: 'Updating typings',
-			task: () => createTypings(),
+			task: () => createTypings(options),
 		},
 	]);
 

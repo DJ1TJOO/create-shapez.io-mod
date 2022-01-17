@@ -41,9 +41,9 @@ export async function cli(args) {
 			.nargs('g', 0)
 			.describe('g', 'Initializes git')
 
-			.alias('i', 'install')
-			.nargs('i', 0)
-			.describe('i', 'Install all dependencies')
+			.alias('n', 'no install')
+			.nargs('n', 0)
+			.describe('n', 'Does not install all dependencies')
 
 			.alias('y', 'yes')
 			.nargs('y', 0)

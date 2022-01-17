@@ -6,12 +6,12 @@ function parseArgumentsIntoOptions(rawArgs) {
 	const args = arg(
 		{
 			'--git': Boolean,
-			'--install': Boolean,
+			'--no-install': Boolean,
 			'--shapez': String,
 			'--shapez-repo': String,
 			'--yes': Boolean,
 			'-g': '--git',
-			'-i': '--install',
+			'-n': '--no-install',
 			'-s': '--shapez',
 			'-r': '--shapez-repo',
 			'-y': '--yes',
@@ -25,7 +25,7 @@ function parseArgumentsIntoOptions(rawArgs) {
 		git: args['--git'] || false,
 		shapez: args['--shapez'] || false,
 		shapezRepo: args['--shapez-repo'] || false,
-		runInstall: args['--install'] || false,
+		runInstall: !args['--no-install'],
 	};
 }
 
@@ -142,22 +142,12 @@ async function promptForMissingOptions(options) {
 		}
 	}
 
-	if (!options.runInstall) {
-		questions.push({
-			type: 'confirm',
-			name: 'runInstall',
-			message: 'Install all modules?',
-			default: true,
-		});
-	}
-
 	const answers = await inquirer.prompt(questions);
 	return {
 		...options,
 		shapezRepo: options.shapezRepo || defaultShapezRepo,
 		shapez: options.shapez || answers.shapez,
 		installShapez: options.shapez ? true : answers.installShapez,
-		runInstall: options.runInstall || answers.runInstall,
 		git: options.git || answers.git,
 		name: answers.name,
 		modId: answers.modId,
