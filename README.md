@@ -72,7 +72,7 @@ It contains a default setup for a mod. The `css` folder contains a `main.scss` h
 The translations folder can contain files with langauge codes as names and ending in yaml: `en.yaml`. In these files you can change translations or add translations. You can have a look at the [shapez.io translations](https://github.com/tobspr/shapez.io/blob/master/translations/base-en.yaml) to see how it works.
 
 # Bugs
-Please report any bugs you find in the [shapez.io modloader discord](https://discord.gg/TRfz9gyZ9x) or create a [new issue](https://github.com/DJ1TJOO/create-shapez.io-mod/issues/new)
+Please report any bugs you find in the [shapez.io modloader discord](https://discord.gg/TRfz9gyZ9x) or [create a new issue](https://github.com/DJ1TJOO/create-shapez.io-mod/issues/new)
 
 # Installing requirements
 ## Installing vscode
