@@ -12,46 +12,56 @@
 
 ### 🏠 [Homepage](https://github.com/DJ1TJOO/create-shapez.io-mod)
 
-## Install
-
-```sh
-npx create-shapezio-mod
-```
-
-## Usage
-
+# Usage
+## CLI
+### Creating a shapez.io mod
+To setup a shapez.io mod run the following command. 
 ```sh
 npx create-shapezio-mod init
+```
+It puts all project files in a new folder named after the mod id.
+Next to running this command make sure that [java](#installing-java) is installed and added to path and when creating building textures [python](#installing-python) is installed.
+
+### Updating shapez.io
+When developing or updating a mod there is a chance the modloader or the cli changes to update your local shapez.io and cli you can run the following command in the working directory.
+```sh
 npx create-shapezio-mod upgrade
+```
+You can choose if you only want to update the build files or shapez.io.
+
+### Updating shapez.io typings
+When updating shapez.io a `types.d.ts` file is created to add type support. If this files somehow gets currupted you can fix it by running the following command in the working directory.
+```sh
 npx create-shapezio-mod typings
 ```
-
-### Building the mod
-
-```sh
-yarn build
-```
-
+## Buildtools
 ### Serving the mod
-
-Serving the mod on http://localhost:3005 with shapez.io
-
+If you want to test your mod while making changes you can serve the mod with shapez.io.
 ```sh
 yarn dev
 ```
+It will automatically reload when you make a change to your mod. 
 
-Serving the mod on http://localhost:3010/mod.js
-<br>To test on shapez.io set local config `externalModUrl` to `http://localhost:3010/mod.js`
-
+You can also choose to only generate and reload the `mod.js` file.
 ```sh
 yarn devMod
 ```
 
-## Run tests
-
+### Building the mod
+If your mod is finished and you want to share it you can run the following command in the working directory.
 ```sh
-npx create-shapezio-mod --version
+yarn build
 ```
+This will generate a `build` folder with a `mod.js` in it. The mod.js is the file you need to share it has all your images, translations, themes and css build in. 
+
+
+## Installing java
+- Download and install java from the official java website: https://www.oracle.com/java/technologies/downloads/
+- Check if java is installed correctly by running `java -version`
+  - If not add java to path: https://www.java.com/en/download/help/path.html
+
+## Installing python
+- Download and install python from the official python website: https://www.python.org/downloads/
 
 ## Author
 
