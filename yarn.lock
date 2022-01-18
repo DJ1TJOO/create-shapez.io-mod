@@ -127,11 +127,6 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-11.15.54.tgz#59ed60e7b0d56905a654292e8d73275034eb6283"
   integrity sha512-1RWYiq+5UfozGsU6MwJyFX6BtktcT10XRjvcAQmskCtMcW3tPske88lM/nHv7BQG1w9KBXI1zPGuu5PnNCX14g==
 
-adm-zip@^0.5.9:
-  version "0.5.9"
-  resolved "https://registry.yarnpkg.com/adm-zip/-/adm-zip-0.5.9.tgz#b33691028333821c0cf95c31374c5462f2905a83"
-  integrity sha512-s+3fXLkeeLjZ2kLjCBwQufpI5fuN+kIGBxu6530nVQZGVol0d7Y/M88/xw9HGGUcJjKf8LutN3VPRUBq6N7Ajg==
-
 ansi-escapes@^3.0.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/ansi-escapes/-/ansi-escapes-3.2.0.tgz#8780b98ff9dbf5638152d1f1fe5c1d7b4442976b"

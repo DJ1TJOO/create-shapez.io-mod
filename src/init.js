@@ -37,7 +37,6 @@ async function promptForMissingOptions(options) {
 	const defaultWebsite = '';
 	const defaultVesion = '1.0.0';
 	const defaultPackageManager = 'yarn';
-	const defaultGitClone = 'clone';
 	const defaultShapez = 'latest';
 	const defaultShapezRepo = 'https://github.com/tobspr/shapez.io/tree/modloader';
 	const defaultInstallShapez = true;
@@ -55,7 +54,6 @@ async function promptForMissingOptions(options) {
 			author: defaultAuthor,
 			version: defaultVesion,
 			packageManager: defaultPackageManager,
-			gitClone: defaultGitClone,
 		};
 	}
 
@@ -120,7 +118,7 @@ async function promptForMissingOptions(options) {
 		questions.push({
 			type: 'confirm',
 			name: 'installShapez',
-			message: 'Download shapez.io build?',
+			message: 'Would you like to download a build of shapez.io so you can directly test your mod?',
 			default: defaultInstallShapez,
 		});
 
@@ -130,16 +128,6 @@ async function promptForMissingOptions(options) {
 			default: defaultShapez,
 			when: (answers) => answers.installShapez,
 		});
-
-		if (!settings.gitClone) {
-			questions.push({
-				type: 'list',
-				name: 'gitClone',
-				message: 'Git clone or download:',
-				choices: ['clone', 'download'],
-				default: defaultGitClone,
-			});
-		}
 	}
 
 	const answers = await inquirer.prompt(questions);
@@ -156,7 +144,6 @@ async function promptForMissingOptions(options) {
 		author: answers.author,
 		version: answers.version,
 		packageManager: answers.packageManager,
-		gitClone: answers.gitClone,
 	};
 }
 
