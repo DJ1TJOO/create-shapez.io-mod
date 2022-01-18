@@ -12,6 +12,29 @@
 
 ### 🏠 [Homepage](https://github.com/DJ1TJOO/create-shapez.io-mod)
 
+# Table of contents
+1. [Usage](#usage)
+  1. [CLI](#cli)
+    1. [Creating a shapez.io mod](#creating-a-shapez.io-mod)
+    2. [Updating shapez.io](#updating-shapez.io)
+    3. [Updating shapez.io typings](#updating-shapez.io-typings)
+  2. [Buildtools](#buildtools)
+    1. [Requirements](#requirements)
+    2. [Serving the mod](#serving-the-mod)
+    3. [Building the mod](#building-the-mod)
+  3. [Creating a mod](#creating-a-mod)
+    1. [Javascript](#javascript)
+    2. [Res](#res)
+    3. [Css](#css)
+    4. [Translations](#translations)
+2. [Bugs](#bugs
+3. [Installing requirements](#installing-requirements)
+  1. [Installing vscode](#installing-vscode)
+  1. [Installing nodejs](#installing-nodejs)
+  1. [Installing yarn](#installing-yarn)
+  1. [Installing java](#installing-java)
+  1. [Installing python](#installing-python)
+
 # Usage
 ## CLI
 ### Creating a shapez.io mod
