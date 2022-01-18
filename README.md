@@ -28,12 +28,12 @@
         3. [Css](#css)
         4. [Translations](#translations)
 2. [Bugs](#bugs)
-    1. [Installing requirements](#installing-requirements)
-        1. [Installing vscode](#installing-vscode)
-        2. [Installing nodejs](#installing-nodejs)
-        3. [Installing yarn](#installing-yarn)
-        4. [Installing java](#installing-java)
-        5. [Installing python](#installing-python)
+3. [Installing requirements](#installing-requirements)
+    1. [Installing vscode](#installing-vscode)
+    2. [Installing nodejs](#installing-nodejs)
+    3. [Installing yarn](#installing-yarn)
+    4. [Installing java](#installing-java)
+    5. [Installing python](#installing-python)
 
 # Usage
 ## CLI
