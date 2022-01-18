@@ -249,7 +249,7 @@ module.exports = ({
                                       ]),
                                 {
                                     pattern:
-                                        /import[ \n]*{([a-zA-Z0-9_$, \n]*)*}[ \n]*from[ \n]*[`|"|'](shapez\/[^]*?)[`|"|'];/gms,
+                                        /import {([\s\S]*?)} from "(.*?)";/gms,
                                     replacement: (match, variables, path) => {
                                         return `const {${variables}} = shapez;`;
                                     },
