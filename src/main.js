@@ -9,7 +9,6 @@ import { exec, execSync } from 'child_process';
 import { Octokit } from '@octokit/rest';
 import url from 'url';
 import prettier from 'prettier';
-import UpdateRenderer from './listr';
 
 const octokit = new Octokit();
 const access = promisify(fs.access);
@@ -162,7 +161,7 @@ async function createTypings(options) {
 	);
 
 	// Update types
-	let types = fs.readFileSync('./shapez/types.d.ts', 'utf-8');
+	let types = fs.readFileSync(path.join(options.targetDirectory, 'shapez/types.d.ts'), 'utf-8');
 	types = types.replace(/declare module "([^]*?)"/gms, (matched, moduleName) => `declare module "shapez/${moduleName}"`);
 	types = types.replace(/import\("([^]*?)"\)/gms, (matched, moduleName, offset, string) => {
 		moduleName = moduleName.replace('.js', '');
@@ -276,7 +275,7 @@ async function createTypings(options) {
 		endOfLine: 'auto',
 	});
 
-	fs.writeFileSync('./src/js/types.d.ts', types, {
+	fs.writeFileSync(path.join(options.targetDirectory, 'src/js/types.d.ts'), types, {
 		overwrite: true,
 	});
 }
