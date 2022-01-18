@@ -36,6 +36,7 @@ npx create-shapezio-mod typings
 ```
 ## Buildtools
 ### Requirements
+- [text editor (vscode)](#installing-vscode)
 - [nodejs v12.13.0+](#installing-nodejs)
 - [yarn](#installing-nodejs)
 - [java 8+](#installing-java)
@@ -71,6 +72,9 @@ It contains a default setup for a mod. The `css` folder contains a `main.scss` h
 The translations folder can contain files with langauge codes as names and ending in yaml: `en.yaml`. In these files you can change translations or add translations. You can have a look at the [shapez.io translations](https://github.com/tobspr/shapez.io/blob/master/translations/base-en.yaml) to see how it works.
 
 # Installing requirements
+## Installing vscode
+- Follow the instructions on https://code.visualstudio.com/docs/setup
+
 ## Installing nodejs
 - Download and install nodejs from the official nodejs website: https://nodejs.org/en/download/
 - Check if nodejs is installed correctly by running `node --version`
