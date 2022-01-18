@@ -104,8 +104,6 @@ async function handleShapez(options) {
 	let buildUtils = fs.readFileSync(path.join(options.targetDirectory, './shapez/gulp/buildutils.js'), 'utf-8');
 	buildUtils = buildUtils.replace(/getRevision[^]*?},/gms, 'getRevision: () => "",');
 	fs.writeFileSync(path.join(options.targetDirectory, 'shapez/gulp/buildutils.js'), buildUtils);
-
-	await createTypings(options);
 }
 
 async function cloneShapez(options) {
@@ -152,7 +150,7 @@ async function createTypings(options) {
 	// Generate types.d.ts
 	await new Promise((res) =>
 		exec(
-			'tsc src/js/application.js --declaration --allowJs --emitDeclarationOnly --skipLibCheck --out types.js',
+			'yarn tsc src/js/application.js --declaration --allowJs --emitDeclarationOnly --skipLibCheck --out types.js',
 			{
 				cwd: path.join(options.targetDirectory, 'shapez'),
 			},
@@ -402,6 +400,10 @@ export async function createProject(options) {
 			skip: () => (!options.runInstall || !options.installShapez ? 'Not installing shapez' : undefined),
 		},
 		{
+			title: 'Creating typings',
+			task: () => createTypings(options),
+		},
+		{
 			title: 'Saving options',
 			task: () => saveOptions(options),
 		},
@@ -486,6 +488,10 @@ export async function upgradeProject(options) {
 					cwd: path.join(options.targetDirectory, 'shapez', 'electron'),
 				}),
 			skip: () => (!options.runInstall || !options.installShapez ? 'Not installing shapez' : undefined),
+		},
+		{
+			title: 'Updating typings',
+			task: () => createTypings(options),
 		},
 		{
 			title: 'Saving options',
