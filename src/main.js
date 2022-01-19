@@ -527,17 +527,12 @@ export async function upgradeProject(options) {
 export async function updateTypings(options) {
 	options = parseOptions(options);
 
-	const tasks = new Listr(
-		[
-			{
-				title: 'Updating typings',
-				task: () => createTypings(options),
-			},
-		],
+	const tasks = new Listr([
 		{
-			renderer: UpdateRenderer,
+			title: 'Updating typings',
+			task: () => createTypings(options),
 		},
-	);
+	]);
 
 	await tasks.run();
 	console.log('%s Typings ready', chalk.green.bold('DONE'));
