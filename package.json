@@ -1,6 +1,6 @@
 {
 	"name": "create-shapezio-mod",
-	"version": "0.9.6",
+	"version": "0.9.7",
 	"main": "index.js",
 	"author": "DJ1TJOO",
 	"license": "GPL-3.0-only",
