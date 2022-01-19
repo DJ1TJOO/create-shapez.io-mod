@@ -254,7 +254,7 @@ module.exports = ({
                                     },
                                 },
                                 {
-                                    pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
+                                    pattern: /extends[^]*?Mod[^]*?{[^]*?init[\s]*?\([^]*?\)[\s]*?{/gms,
                                     replacement: match => {
                                         const css = `this.modInterface.registerCss(CSS_MAIN);`;
 
@@ -262,7 +262,7 @@ module.exports = ({
                                     },
                                 },
                                 {
-                                    pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
+                                    pattern: /extends[^]*?Mod[^]*?{[^]*?init[\s]*?\([^]*?\)[\s]*?{/gms,
                                     replacement: match => {
                                         const atlases = `const importAtlases = ATLASES;\nfor (const key in importAtlases) {\nconst atlas=importAtlases[key];\nthis.modInterface.registerAtlas(atlas.src, atlas.atlasData);\n}`;
 
@@ -270,7 +270,7 @@ module.exports = ({
                                     },
                                 },
                                 {
-                                    pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
+                                    pattern: /extends[^]*?Mod[^]*?{[^]*?init[\s]*?\([^]*?\)[\s]*?{/gms,
                                     replacement: match => {
                                         const translations = `const importTranslations = TRANSLATIONS;\nfor (const translationId in importTranslations) {\nconst translation = importTranslations[translationId];\nthis.modInterface.registerTranslations(translationId, translation);\n}`;
 
@@ -278,7 +278,7 @@ module.exports = ({
                                     },
                                 },
                                 {
-                                    pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
+                                    pattern: /extends[^]*?Mod[^]*?{[^]*?init[\s]*?\([^]*?\)[\s]*?{/gms,
                                     replacement: match => {
                                         const themes = `const importThemes = THEMES;\nfor (const themeId in importThemes) {\nconst themeMod = importThemes[themeId];\nif (shapez.THEMES[themeId]) {\nshapez.matchDataRecursive(shapez.THEMES[themeId], themeMod);\n} else {\nthis.modInterface.registerGameTheme({\nid: themeId,\nname: themeMod.name,\ntheme: themeMod,\n});\n}\n}`;
 
