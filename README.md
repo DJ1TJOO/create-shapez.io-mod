@@ -60,7 +60,7 @@ npx create-shapezio-mod typings
 ## Buildtools
 ### Requirements
 - [text editor (vscode)](#installing-vscode)
-- [nodejs ^12.13.0 | ^14.17.0 | >=16.0.0](#installing-nodejs)
+- [nodejs ^12.22.0 | ^14.17.0 | >=16.0.0](#installing-nodejs)
 - [yarn](#installing-nodejs)
 - [java 8+](#installing-java)
 - [python 3](#installing-python)
