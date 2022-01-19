@@ -110,7 +110,7 @@ async function cloneShapez(options) {
 	let [owner, repo, tree, branch] = options.shapezRepo.replace('https://github.com/', '').split('/');
 	await new Promise((res) => {
 		exec(
-			`git clone https://github.com/${owner}/${repo} ./shapez`,
+			`git clone --depth 1${branch ? ` -b ${branch}` : ''} https://github.com/${owner}/${repo}.git ./shapez`,
 			{
 				cwd: options.targetDirectory,
 			},
@@ -324,6 +324,11 @@ export function getOptions(targetDirectory) {
 
 export async function createProject(options) {
 	options.targetDirectory = path.join(process.cwd(), options.modId);
+	if (fs.existsSync(options.targetDirectory)) {
+		console.log('%s A folder with the name "%s" already exists', chalk.red.bold('ERROR'), options.modId);
+		return;
+	}
+
 	options = parseOptions(options);
 
 	const pathName = url.fileURLToPath(import.meta.url);
@@ -402,6 +407,7 @@ export async function createProject(options) {
 		{
 			title: 'Creating typings',
 			task: () => createTypings(options),
+			skip: () => (!options.installShapez ? 'Not installing shapez' : undefined),
 		},
 		{
 			title: 'Saving options',
@@ -419,6 +425,8 @@ export async function createProject(options) {
 			chalk.green.bold('yarn build'),
 			chalk.green.bold('yarn devStandalone'),
 		);
+	} else {
+		console.log('%s You can now use %s', chalk.bgBlueBright.white.bold(' INFO '), chalk.green.bold('yarn build'));
 	}
 	return true;
 }
@@ -492,6 +500,7 @@ export async function upgradeProject(options) {
 		{
 			title: 'Updating typings',
 			task: () => createTypings(options),
+			skip: () => (!options.installShapez ? 'Not installing shapez' : undefined),
 		},
 		{
 			title: 'Saving options',
@@ -509,6 +518,8 @@ export async function upgradeProject(options) {
 			chalk.green.bold('yarn build'),
 			chalk.green.bold('yarn devStandalone'),
 		);
+	} else {
+		console.log('%s You can now use %s', chalk.bgBlueBright.white.bold(' INFO '), chalk.green.bold('yarn build'));
 	}
 	return true;
 }

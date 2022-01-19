@@ -14,8 +14,8 @@ module.exports = ({
     injectThemes = true,
 }) => {
     return {
-        mode: "development",
-        devtool: "cheap-source-map",
+        mode: watch ? "development" : "production",
+        ...(watch ? { devtool: "cheap-source-map" } : {}),
         entry: {
             "mod.js": [path.resolve(__dirname, "../src/js/main.js")],
         },
@@ -248,8 +248,7 @@ module.exports = ({
                                           },
                                       ]),
                                 {
-                                    pattern:
-                                        /import {([\s\S]*?)} from "shapez\/(.*?)";/gms,
+                                    pattern: /import {([\s\S]*?)} from "shapez\/(.*?)";/gms,
                                     replacement: (match, variables, path) => {
                                         return `const {${variables}} = shapez;`;
                                     },
