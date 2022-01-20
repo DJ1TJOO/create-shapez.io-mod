@@ -28,6 +28,14 @@ module.exports = ({
         },
         plugins: [
             new StringReplacePlugin(),
+            ...(watch
+                ? [
+                      new webpack.SourceMapDevToolPlugin({
+                          filename: "[file].map",
+                          publicPath: "http://localhost:3010/",
+                      }),
+                  ]
+                : []),
             new webpack.DefinePlugin({
                 assert: watch ? "window.assert" : "false && window.assert",
                 assertAlways: "window.assert",
