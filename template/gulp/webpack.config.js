@@ -15,7 +15,7 @@ module.exports = ({
 }) => {
     return {
         mode: watch ? "development" : "production",
-        ...(watch ? { devtool: "cheap-source-map" } : {}),
+        ...(watch ? { devtool: "hidden-source-map" } : {}),
         entry: {
             "mod.js": [path.resolve(__dirname, "../src/js/main.js")],
         },
