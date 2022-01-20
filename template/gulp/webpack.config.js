@@ -29,7 +29,7 @@ module.exports = ({
         plugins: [
             new StringReplacePlugin(),
             new webpack.DefinePlugin({
-                assert: "window.assert",
+                assert: watch ? "window.assert" : "false && window.assert",
                 assertAlways: "window.assert",
                 MOD_METADATA: webpack.DefinePlugin.runtimeValue(
                     function () {
