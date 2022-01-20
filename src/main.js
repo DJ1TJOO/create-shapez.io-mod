@@ -264,11 +264,6 @@ async function createTypings(options) {
 		/export namespace globalConfig {/g,
 		`
     export namespace globalConfig {
-        export const minerSpeedItemsPerSecond: number;
-        export const mapChunkWorldSize: number;
-        export const mapChunkOverviewMinZoom: number;
-        export const warmupTimeSecondsFast: number;
-        export const warmupTimeSecondsRegular: number;
 		export const tileSize: number;
         export const halfTileSize: number;
         export const beltSpeedItemsPerSecond: number;
