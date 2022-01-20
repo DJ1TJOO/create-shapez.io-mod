@@ -5,7 +5,7 @@
     "mod-info": {
         "name": "mod_name",
         "website": "mod_website",
-        "description": "mod_descripiton",
+        "description": "mod_description",
         "settings": {}
     },
     "license": "GPL-3.0-only",
