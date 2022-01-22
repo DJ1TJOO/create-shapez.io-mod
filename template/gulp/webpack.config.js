@@ -234,6 +234,19 @@ module.exports = async ({ watch = false }) => {
                                         pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
                                         replacement(match) {
                                             const modFolder = getModFolder(this.resourcePath);
+                                            if (
+                                                !fs.existsSync(
+                                                    path.join(
+                                                        "..",
+                                                        "build",
+                                                        modFolder,
+                                                        "atlases",
+                                                        "atlas0_hq.png"
+                                                    )
+                                                )
+                                            ) {
+                                                return match;
+                                            }
 
                                             const atlases = `this.modInterface.registerAtlas(
                                                             require("../../../build/${modFolder}/atlases/atlas0_hq.png"),
