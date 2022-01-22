@@ -5,8 +5,14 @@ module.exports = function (source, map) {
         return this.callback(null, source, map);
     }
 
-    var header = typeof this.query.header === "function" ? this.query.header(source, map) : this.query.header;
-    var footer = typeof this.query.footer === "function" ? this.query.footer(source, map) : this.query.footer;
+    var header =
+        typeof this.query.header === "function"
+            ? this.query.header.call(this, source, map)
+            : this.query.header;
+    var footer =
+        typeof this.query.footer === "function"
+            ? this.query.footer.call(this, source, map)
+            : this.query.footer;
 
     source = header + "\n" + source + "\n" + footer;
 

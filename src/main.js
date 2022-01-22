@@ -15,9 +15,17 @@ const access = promisify(fs.access);
 const copy = promisify(ncp);
 
 async function copyTemplateFiles(options) {
-	return copy(options.templateDirectory, options.targetDirectory, {
+	await copy(options.templateDirectory, options.targetDirectory, {
+		filter: /src/g,
 		clobber: false,
 	});
+
+	// Copy template src files
+	if (options.modId) {
+		await copy(path.join(options.templateDirectory, 'src'), path.join(options.targetDirectory, 'src', options.modId), {
+			clobber: false,
+		});
+	}
 }
 
 async function updateBuildFiles(options) {
@@ -27,37 +35,25 @@ async function updateBuildFiles(options) {
 }
 
 async function updateTemplateFiles(options) {
-	// Paths
+	// Path
 	const targetDirectory = options.targetDirectory;
-	const packagePath = path.join(targetDirectory, 'package.json');
-	const mainPath = path.join(targetDirectory, 'src', 'js', 'main.js');
+	const modPath = path.join(targetDirectory, options.modId, 'mod.json');
 
-	// Read files
-	let packageFile = fs.readFileSync(packagePath, {
-		encoding: 'utf-8',
-	});
-	let mainFile = fs.readFileSync(mainPath, {
+	// Read file
+	let modFile = fs.readFileSync(modPath, {
 		encoding: 'utf-8',
 	});
 
-	// Update files
-	packageFile = packageFile.replace(/mod_id/g, options.modId);
-	packageFile = packageFile.replace(/mod_name/g, options.name);
-	packageFile = packageFile.replace(/mod_description/g, options.description);
-	packageFile = packageFile.replace(/mod_version/g, options.version);
-	packageFile = packageFile.replace(/mod_author/g, options.author);
-	packageFile = packageFile.replace(/mod_website/g, options.website);
+	// Update file
+	modFile = modFile.replace(/mod_id/g, options.modId);
+	modFile = modFile.replace(/mod_name/g, options.name);
+	modFile = modFile.replace(/mod_description/g, options.description);
+	modFile = modFile.replace(/mod_version/g, options.version);
+	modFile = modFile.replace(/mod_author/g, options.author);
+	modFile = modFile.replace(/mod_website/g, options.website);
 
-	mainFile = mainFile.replace(/mod_id/g, options.modId);
-	mainFile = mainFile.replace(/mod_name/g, options.name);
-	mainFile = mainFile.replace(/mod_description/g, options.description);
-	mainFile = mainFile.replace(/mod_version/g, options.version);
-	mainFile = mainFile.replace(/mod_author/g, options.author);
-	mainFile = mainFile.replace(/mod_website/g, options.website);
-
-	// Write files
-	fs.writeFileSync(packagePath, packageFile);
-	fs.writeFileSync(mainPath, mainFile);
+	// Write file
+	fs.writeFileSync(modPath, modFile);
 
 	return;
 }
@@ -97,7 +93,7 @@ async function handleShapez(options) {
 
 	// Update local config
 	let config = fs.readFileSync(path.join(options.targetDirectory, 'shapez/src/js/core/config.local.template.js'), 'utf-8');
-	config = config.replace(/(\/\/)?[\s]*externalModUrl:[^]*?"[^]*?",/gms, 'externalModUrl: "http://localhost:3010/mod.js",');
+	config = config.replace(/(\/\/)?[\s]*externalModUrl:[^]*?,/gms, '\nexternalModUrl: "http://localhost:3010/mod/mod.js",');
 	fs.writeFileSync(path.join(options.targetDirectory, 'shapez/src/js/core/config.local.js'), config);
 
 	// Fix getRevision
@@ -179,27 +175,7 @@ async function createTypings(options) {
 		(matched, imports, moduleName) => `import {${imports}} from "shapez/${moduleName.replace(/\.\.\//gms, '').replace('.js', '')}"`,
 	);
 	types = types.replace(/var _default/gms, 'let _default');
-	types += `declare const CSS_MAIN: string;
-					declare const ATLASES: {
-						hq: {
-							src: string;
-							atlasData: import("shapez/core/loader").AtlasDefinition;
-						};
-						mq: {
-							src: string;
-							atlasData: import("shapez/core/loader").AtlasDefinition;
-						};
-						lq: {
-							src: string;
-							atlasData: import("shapez/core/loader").AtlasDefinition;
-						};
-					};
-					declare const TRANSLATIONS: {
-						[x: string]: object
-					};
-					declare const THEMES: {
-						[x: string]: object
-					};
+	types += `
 					declare const shapez: any;
 					declare function $shapez_registerMod(
 						mod: typeof import("shapez/mods/mod").Mod,
@@ -330,10 +306,13 @@ async function createTypings(options) {
 		arrowParens: 'avoid',
 		endOfLine: 'auto',
 	});
-
-	fs.writeFileSync(path.join(options.targetDirectory, 'src/js/types.d.ts'), types, {
-		overwrite: true,
-	});
+	const modDirs = fs.readdirSync('../src');
+	for (let i = 0; i < modDirs.length; i++) {
+		const dir = modDirs[i];
+		fs.writeFileSync(path.join(options.targetDirectory, `src/${dir}/js/types.d.ts`), types, {
+			overwrite: true,
+		});
+	}
 }
 
 async function initGit(options) {

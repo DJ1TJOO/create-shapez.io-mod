@@ -1,0 +1,10 @@
+{
+    "entry": "main.js",
+    "id": "mod_id",
+    "version": "mod_version",
+    "name": "mod_name",
+    "author": "mod_author",
+    "description": "mod_description",
+    "website": "mod_website",
+    "settings": {}
+}

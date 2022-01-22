@@ -1,17 +1,9 @@
 {
-    "name": "mod_id",
-    "version": "mod_version",
-    "author": "mod_author",
-    "mod-info": {
-        "name": "mod_name",
-        "website": "mod_website",
-        "description": "mod_description",
-        "settings": {}
-    },
+    "name": "shapez-io-mods",
+    "version": "1.0.0",
     "license": "GPL-3.0-only",
     "scripts": {
         "dev": "cd gulp && yarn gulp",
-        "devMod": "cd gulp && yarn gulp main.watch.mod",
         "devStandalone": "cd gulp && yarn gulp main.watch.standalone",
         "build": "cd gulp && yarn gulp main.build",
         "tslint": "cd src/js && yarn tsc",
