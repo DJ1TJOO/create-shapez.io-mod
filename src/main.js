@@ -15,16 +15,35 @@ const access = promisify(fs.access);
 const copy = promisify(ncp);
 
 async function copyTemplateFiles(options) {
-	await copy(options.templateDirectory, options.targetDirectory, {
-		filter: /src/g,
-		clobber: false,
-	});
-
 	// Copy template src files
 	if (options.modId) {
-		await copy(path.join(options.templateDirectory, 'src'), path.join(options.targetDirectory, 'src', options.modId), {
-			clobber: false,
-		});
+		try {
+			if (!fs.existsSync(options.targetDirectory)) {
+				fs.mkdirSync(options.targetDirectory);
+			}
+
+			if (!fs.existsSync(path.join(options.targetDirectory, 'src', options.modId))) {
+				fs.mkdirSync(path.join(options.targetDirectory, 'src', options.modId), { recursive: true });
+			}
+
+			await copy(path.join(options.templateDirectory, 'src'), path.join(options.targetDirectory, 'src', options.modId), {
+				clobber: false,
+			});
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	const dirs = fs.readdirSync(options.templateDirectory).filter((x) => !x.includes('src'));
+	for (let i = 0; i < dirs.length; i++) {
+		const dir = dirs[i];
+		try {
+			await copy(path.join(options.templateDirectory, dir), path.join(options.targetDirectory, dir), {
+				clobber: false,
+			});
+		} catch (error) {
+			console.log(error);
+		}
 	}
 }
 
@@ -37,7 +56,7 @@ async function updateBuildFiles(options) {
 async function updateTemplateFiles(options) {
 	// Path
 	const targetDirectory = options.targetDirectory;
-	const modPath = path.join(targetDirectory, options.modId, 'mod.json');
+	const modPath = path.join(targetDirectory, 'src', options.modId, 'mod.json');
 
 	// Read file
 	let modFile = fs.readFileSync(modPath, {
@@ -306,7 +325,7 @@ async function createTypings(options) {
 		arrowParens: 'avoid',
 		endOfLine: 'auto',
 	});
-	const modDirs = fs.readdirSync('../src');
+	const modDirs = fs.readdirSync(path.join(options.targetDirectory, 'src'));
 	for (let i = 0; i < modDirs.length; i++) {
 		const dir = modDirs[i];
 		fs.writeFileSync(path.join(options.targetDirectory, `src/${dir}/js/types.d.ts`), types, {
@@ -360,9 +379,9 @@ export function getOptions(targetDirectory) {
 }
 
 export async function createProject(options) {
-	options.targetDirectory = path.join(process.cwd(), options.modId);
+	options.targetDirectory = path.join(process.cwd(), 'shapezio-mods');
 	if (fs.existsSync(options.targetDirectory)) {
-		console.log('%s A folder with the name "%s" already exists', chalk.red.bold('ERROR'), options.modId);
+		console.log('%s A folder with the name "%s" already exists', chalk.red.bold('ERROR'), 'shapezio-mods');
 		return;
 	}
 
