@@ -51,7 +51,7 @@ module.exports = async ({ watch = false }) => {
 
     const shapezMods = [
         ...mods.map(x => `http://localhost:3010/${x.folder}/mod.js`),
-        ...externalMods.map(x => `http://localhost:3010/x`),
+        ...externalMods.map(x => `http://localhost:3010/${x}`),
     ];
 
     // Store in shapez config
