@@ -39,6 +39,11 @@ module.exports = async ({ watch = false }) => {
     // Update shapez config
     const externalMods = [];
     const externalModDir = fs.readdirSync("../mods");
+
+    if (!fs.existsSync(path.join("..", "build"))) {
+        fs.mkdirSync(path.join("..", "build"));
+    }
+
     for (let i = 0; i < externalModDir.length; i++) {
         const file = externalModDir[i];
 
