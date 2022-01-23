@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const CircularDependencyPlugin = require("circular-dependency-plugin");
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const { DefinePlugin } = require("webpack");
 const { CreateAtlas } = require("./atlas");
 const { SourceMapDevToolPlugin } = require("webpack");
@@ -63,8 +64,8 @@ module.exports = async ({ watch = false }) => {
     const configPath = path.join(__dirname, "..", "shapez", "src", "js", "core", "config.local.js");
     let config = fs.readFileSync(configPath, "utf-8");
     config = config.replace(
-        /(\/\/)?[\s]*externalModUrl:[^]*?,/gms,
-        `\nexternalModUrl: [${shapezMods.map(x => `"${x}"`).join(", ")}],`
+        /(\/\/|\n)?[\s]*externalModUrl:[^]*?,[\s]*?\/\//gms,
+        `\nexternalModUrl: [${shapezMods.map(x => `"${x}"`).join(", ")}],\n//`
     );
     fs.writeFileSync(configPath, config);
 
@@ -100,11 +101,12 @@ module.exports = async ({ watch = false }) => {
             open: false,
         },
         plugins: [
+            new NodePolyfillPlugin(),
             ...(watch
                 ? [
                       new SourceMapDevToolPlugin({
                           filename: "[file].map",
-                          publicPath: "http://localhost:3010/",
+                          publicPath: "http://localhost:3010/[name]/",
                       }),
                   ]
                 : []),
@@ -166,7 +168,7 @@ module.exports = async ({ watch = false }) => {
                     use: "yaml-loader",
                 },
                 {
-                    test: /[^d]\.[jt]s$/,
+                    test: /(^.?|\.[^d]|[^.]d|[^.][^d])\.[jt]s$/,
                     exclude: /node_modules/,
                     use: [
                         {
@@ -229,14 +231,14 @@ module.exports = async ({ watch = false }) => {
                                         },
                                     },
                                     {
-                                        pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
+                                        pattern: /extends[\s]*?Mod[\s]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
                                         replacement: match => {
                                             const css = `this.modInterface.registerCss(require("../css/main.scss").default);`;
                                             return `${match}\n${css}`;
                                         },
                                     },
                                     {
-                                        pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
+                                        pattern: /extends[\s]*?Mod[\s]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
                                         replacement(match) {
                                             const modFolder = getModFolder(this.resourcePath);
                                             if (
@@ -269,7 +271,7 @@ module.exports = async ({ watch = false }) => {
                                         },
                                     },
                                     {
-                                        pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
+                                        pattern: /extends[\s]*?Mod[\s]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
                                         replacement(match) {
                                             const modFolder = getModFolder(this.resourcePath);
 
@@ -297,7 +299,7 @@ module.exports = async ({ watch = false }) => {
                                         },
                                     },
                                     {
-                                        pattern: /extends[^]*?Mod[^]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
+                                        pattern: /extends[\s]*?Mod[\s]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
                                         replacement(match) {
                                             const modFolder = getModFolder(this.resourcePath);
 
