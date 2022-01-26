@@ -30,6 +30,12 @@ module.exports = async ({ watch = false }) => {
     for (let i = 0; i < modDirs.length; i++) {
         const modFolder = modDirs[i];
         try {
+            if (!fs.existsSync(path.join("../src", modFolder, "translations"))) {
+                fs.mkdirSync(path.join("../src", modFolder, "translations"));
+            }
+            if (!fs.existsSync(path.join("../src", modFolder, "themes"))) {
+                fs.mkdirSync(path.join("../src", modFolder, "themes"));
+            }
             const mod = JSON.parse(fs.readFileSync(path.join("../src", modFolder, "mod.json")));
             mods.push({ folder: modFolder, ...mod });
         } catch (error) {
@@ -39,6 +45,11 @@ module.exports = async ({ watch = false }) => {
 
     // Update shapez config
     const externalMods = [];
+
+    if (!fs.existsSync(path.join("..", "mods"))) {
+        fs.mkdirSync(path.join("..", "mods"));
+    }
+
     const externalModDir = fs.readdirSync("../mods");
 
     if (!fs.existsSync(path.join("..", "build"))) {
