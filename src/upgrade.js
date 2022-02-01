@@ -31,7 +31,7 @@ function parseArgumentsIntoOptions(rawArgs) {
 
 async function promptForMissingOptions(options) {
 	const defaultShapez = 'latest';
-	const defaultShapezRepo = 'https://github.com/tobspr/shapez.io/tree/modloader';
+	const defaultShapezRepo = 'https://github.com/tobspr/shapez.io/tree/master';
 	const defaultInstallShapez = true;
 	const defaultUpdateFiles = true;
 	const defaultPackageManager = 'yarn';
