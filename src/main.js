@@ -123,13 +123,19 @@ async function handleShapez(options) {
 
 async function cloneShapez(options) {
 	let [owner, repo, tree, branch] = options.shapezRepo.replace('https://github.com/', '').split('/');
-	await new Promise((res) => {
+	await new Promise((res, rej) => {
 		exec(
 			`git clone --depth 1${branch ? ` -b ${branch}` : ''} https://github.com/${owner}/${repo}.git ./shapez`,
 			{
 				cwd: options.targetDirectory,
 			},
-			res,
+			(err) => {
+				if (err) {
+					console.log(err);
+					rej();
+				}
+				res();
+			},
 		);
 	});
 	await updateClonedShapez(options);
@@ -138,23 +144,35 @@ async function cloneShapez(options) {
 async function updateClonedShapez(options) {
 	const commitId = await getShapezCommit(options);
 
-	await new Promise((res) => {
+	await new Promise((res, rej) => {
 		exec(
 			`git fetch`,
 			{
 				cwd: path.join(options.targetDirectory, 'shapez'),
 			},
-			res,
+			(err) => {
+				if (err) {
+					console.log(err);
+					rej();
+				}
+				res();
+			},
 		);
 	});
 
-	await new Promise((res) => {
+	await new Promise((res, rej) => {
 		exec(
 			`git checkout -f ${commitId}`,
 			{
 				cwd: path.join(options.targetDirectory, 'shapez'),
 			},
-			res,
+			(err) => {
+				if (err) {
+					console.log(err);
+					rej();
+				}
+				res();
+			},
 		);
 	});
 
@@ -163,13 +181,19 @@ async function updateClonedShapez(options) {
 
 async function createTypings(options) {
 	// Generate types.d.ts
-	await new Promise((res) =>
+	await new Promise((res, rej) =>
 		exec(
 			'yarn tsc src/js/application.js --declaration --allowJs --emitDeclarationOnly --skipLibCheck --out types.js',
 			{
 				cwd: path.join(options.targetDirectory, 'shapez'),
 			},
-			res,
+			(err) => {
+				if (err) {
+					console.log(err);
+					rej();
+				}
+				res();
+			},
 		),
 	);
 
