@@ -132,7 +132,7 @@ async function cloneShapez(options) {
 			(err) => {
 				if (err) {
 					console.log(err);
-					rej();
+					rej(err);
 				}
 				res();
 			},
@@ -153,7 +153,7 @@ async function updateClonedShapez(options) {
 			(err) => {
 				if (err) {
 					console.log(err);
-					rej();
+					rej(err);
 				}
 				res();
 			},
@@ -169,7 +169,7 @@ async function updateClonedShapez(options) {
 			(err) => {
 				if (err) {
 					console.log(err);
-					rej();
+					rej(err);
 				}
 				res();
 			},
@@ -190,7 +190,7 @@ async function createTypings(options) {
 			(err) => {
 				if (err) {
 					console.log(err);
-					rej();
+					rej(err);
 				}
 				res();
 			},
