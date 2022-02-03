@@ -128,7 +128,6 @@ async function cloneShapez(options) {
 			`git clone --depth 1${branch ? ` -b ${branch}` : ''} https://github.com/${owner}/${repo}.git ./shapez`,
 			{
 				cwd: options.targetDirectory,
-				shell: false,
 			},
 			(err) => {
 				if (err) {
@@ -150,7 +149,6 @@ async function updateClonedShapez(options) {
 			`git fetch`,
 			{
 				cwd: path.join(options.targetDirectory, 'shapez'),
-				shell: false,
 			},
 			(err) => {
 				if (err) {
@@ -167,7 +165,6 @@ async function updateClonedShapez(options) {
 			`git checkout -f ${commitId}`,
 			{
 				cwd: path.join(options.targetDirectory, 'shapez'),
-				shell: false,
 			},
 			(err) => {
 				if (err) {
@@ -189,7 +186,6 @@ async function createTypings(options) {
 			'yarn tsc src/js/application.js --declaration --allowJs --emitDeclarationOnly --skipLibCheck --out types.js',
 			{
 				cwd: path.join(options.targetDirectory, 'shapez'),
-				shell: false,
 			},
 			(err) => {
 				if (err) {
@@ -366,7 +362,6 @@ async function initGit(options) {
 	try {
 		execSync('git init', {
 			cwd: options.targetDirectory,
-			shell: false,
 		});
 		return;
 	} catch (error) {
