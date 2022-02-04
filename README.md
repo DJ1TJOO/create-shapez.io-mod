@@ -67,6 +67,7 @@ npx create-shapezio-mod typings
 - [java 8+](#installing-java)
 - [python 3](#installing-python)
 - [git](#installing-git)
+- [ffmpeg](#installing-ffmpeg)
 ### Serving the mod
 If you want to test your mod while making changes you can serve the mod with shapez.io.
 ```sh
