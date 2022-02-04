@@ -88,7 +88,7 @@ The `js` folder contains all the code for your script. In the `js` folder there 
 ### Res
 To change or add images or building sprites you can use the `res` folder. To change building sprites put them in the `sprites/buildings` folder. You can use the python script to generate the blueprint images or create them your self and put them in the `sprites/blueprints` folder.
 ### Css
-It contains a default setup for a mod. The `css` folder contains a `main.scss` here you can use your scss or css to add to shapez. If you want to add images you can use `inline("icons/building1.png")` this will link to the icon in `res/icons/building1.png`.
+It contains a default setup for a mod. The `css` folder contains a `main.scss` here you can use your scss or css to add to shapez. If you want to add images you can use `url("../res/icons/building1.png")` this will link to the icon in `res/icons/building1.png`.
 ### Translations
 The translations folder can contain files with [two letter language codes](https://www.loc.gov/standards/iso639-2/php/code_list.php) as names and ending in yaml: `en.yaml`. In these files you can change translations or add translations. You can have a look at the [shapez.io translations](https://github.com/tobspr/shapez.io/blob/master/translations/base-en.yaml) to see how it works.
 
