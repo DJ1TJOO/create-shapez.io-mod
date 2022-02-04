@@ -43,7 +43,7 @@ To setup a shapez.io mod run the following command. Make sure all [requirements]
 ```sh
 npx create-shapezio-mod init
 ```
-It puts all project files in a new folder named shapezio-mods. Do not forgot to move into this folder to run any other commands.
+It puts all project files in a new folder named shapezio-mods. Do not forget to move into this folder to run any other commands.
 
 Next to running this command make sure that [java](#installing-java) is installed and added to path and when creating building textures [python](#installing-python) is installed.
 
