@@ -38,7 +38,7 @@ async function promptForMissingOptions(options) {
 	const defaultVesion = '1.0.0';
 	const defaultPackageManager = 'yarn';
 	const defaultShapez = 'latest';
-	const defaultShapezRepo = 'https://github.com/tobspr/shapez.io/tree/master';
+	const defaultShapezRepo = 'https://github.com/tobspr/shapez.io';
 	const defaultInstallShapez = true;
 
 	if (options.skipPrompts) {
