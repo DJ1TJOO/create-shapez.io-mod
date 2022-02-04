@@ -42,11 +42,10 @@ async function promptForMissingOptions(options) {
 			shapez: options.shapez || defaultShapez,
 			installShapez: options.shapez || defaultInstallShapez,
 			updateFiles: options.updateFiles || defaultUpdateFiles,
-			packageManager: defaultPackageManager,
+			packageManager: 'yarn',
 		};
 	}
 
-	const settings = getOptions(process.cwd());
 	const questions = [];
 	if (!options.shapez) {
 		questions.push({
@@ -73,16 +72,6 @@ async function promptForMissingOptions(options) {
 		});
 	}
 
-	if (options.runInstall && !settings.packageManager) {
-		questions.push({
-			type: 'list',
-			name: 'packageManager',
-			message: 'Choose which package manager you want to use:',
-			choices: ['yarn', 'npm'],
-			default: defaultPackageManager,
-		});
-	}
-
 	const answers = await inquirer.prompt(questions);
 	return {
 		shapezRepo: options.shapezRepo || defaultShapezRepo,
@@ -90,7 +79,7 @@ async function promptForMissingOptions(options) {
 		installShapez: options.shapez ? true : answers.installShapez,
 		runInstall: options.runInstall || answers.runInstall,
 		updateFiles: options.updateFiles || answers.updateFiles,
-		packageManager: answers.packageManager,
+		packageManager: 'yarn',
 	};
 }
 

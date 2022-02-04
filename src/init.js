@@ -36,7 +36,6 @@ async function promptForMissingOptions(options) {
 	const defaultAuthor = '';
 	const defaultWebsite = '';
 	const defaultVesion = '1.0.0';
-	const defaultPackageManager = 'yarn';
 	const defaultShapez = 'latest';
 	const defaultShapezRepo = 'https://github.com/tobspr/shapez.io';
 	const defaultInstallShapez = true;
@@ -53,7 +52,7 @@ async function promptForMissingOptions(options) {
 			description: defaultDescription,
 			author: defaultAuthor,
 			version: defaultVesion,
-			packageManager: defaultPackageManager,
+			packageManager: 'yarn',
 		};
 	}
 
@@ -94,17 +93,6 @@ async function promptForMissingOptions(options) {
 		default: defaultWebsite,
 	});
 
-	const settings = getOptions(process.cwd());
-	if (!settings.packageManager) {
-		questions.push({
-			type: 'list',
-			name: 'packageManager',
-			message: 'Choose which package manager you want to use:',
-			choices: ['yarn', 'npm'],
-			default: defaultPackageManager,
-		});
-	}
-
 	if (!options.git) {
 		questions.push({
 			type: 'confirm',
@@ -143,7 +131,7 @@ async function promptForMissingOptions(options) {
 		description: answers.description,
 		author: answers.author,
 		version: answers.version,
-		packageManager: answers.packageManager,
+		packageManager: 'yarn',
 	};
 }
 
