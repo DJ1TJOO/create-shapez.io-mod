@@ -34,7 +34,6 @@ async function promptForMissingOptions(options) {
 	const defaultShapezRepo = 'https://github.com/tobspr/shapez.io';
 	const defaultInstallShapez = true;
 	const defaultUpdateFiles = true;
-	const defaultPackageManager = 'yarn';
 
 	if (options.skipPrompts) {
 		return {

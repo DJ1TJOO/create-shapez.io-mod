@@ -34,26 +34,28 @@
     3. [Installing yarn](#installing-yarn)
     4. [Installing java](#installing-java)
     5. [Installing python](#installing-python)
+    6. [Installing git](#installing-git)
 
 # Usage
 ## CLI
 ### Creating a shapez.io mod
-To setup a shapez.io mod run the following command. 
+To setup a shapez.io mod run the following command. Make sure all [requirements](#requirements) are installed.
 ```sh
 npx create-shapezio-mod init
 ```
-It puts all project files in a new folder named after the mod id.
+It puts all project files in a new folder named shapezio-mods. Do not forgot to move into this folder to run any other commands.
+
 Next to running this command make sure that [java](#installing-java) is installed and added to path and when creating building textures [python](#installing-python) is installed.
 
 ### Updating shapez.io
-When developing or updating a mod there is a chance the modloader or the cli changes to update your local shapez.io and cli you can run the following command in the working directory.
+When developing or updating a mod there is a chance the modloader or the cli changes to update your local shapez.io and cli you can run the following command in the shapezio-mods folder.
 ```sh
 npx create-shapezio-mod upgrade
 ```
 You can choose if you only want to update the build files or shapez.io.
 
 ### Updating shapez.io typings
-When updating shapez.io a `types.d.ts` file is created to add type support. If this files somehow gets currupted you can fix it by running the following command in the working directory.
+When updating shapez.io a `types.d.ts` file is created to add type support. If this files somehow gets currupted you can fix it by running the following command in the shapezio-mods folder.
 ```sh
 npx create-shapezio-mod typings
 ```
@@ -64,6 +66,7 @@ npx create-shapezio-mod typings
 - [yarn](#installing-nodejs)
 - [java 8+](#installing-java)
 - [python 3](#installing-python)
+- [git](#installing-git)
 ### Serving the mod
 If you want to test your mod while making changes you can serve the mod with shapez.io.
 ```sh
@@ -115,6 +118,8 @@ Please report any bugs you find in the [shapez.io modloader discord](https://dis
 ## Installing python
 - Download and install python from the official python website: https://www.python.org/downloads/
 
+## Installing git
+- Follow the install instructions from github or git: https://github.com/git-guides/install-git
 ## Author
 
 👤 **DJ1TJOO**
