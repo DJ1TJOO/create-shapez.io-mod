@@ -120,6 +120,11 @@ Please report any bugs you find in the [shapez.io modloader discord](https://dis
 
 ## Installing git
 - Follow the install instructions from github or git: https://github.com/git-guides/install-git
+
+## Installing ffmpeg
+- Download ffmpeg: https://ffmpeg.org/download.html
+- Add ffmpeg to path: https://www.java.com/en/download/help/path.html
+
 ## Author
 
 👤 **DJ1TJOO**
