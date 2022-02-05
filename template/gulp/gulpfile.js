@@ -124,6 +124,6 @@ function getGlobs(folder, customExtenstions = []) {
 }
 
 gulp.task("main.watch", gulp.series("main.build.dev", "main.serve.shapez"));
-gulp.task("main.watch.standalone", gulp.series("main.build.dev", "main.serve.standalone", "main.watch"));
+gulp.task("main.watch.standalone", gulp.series("main.serve.standalone", "main.watch"));
 
 gulp.task("default", gulp.series("main.watch"));
