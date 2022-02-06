@@ -68,7 +68,7 @@ module.exports = async ({ watch = false }) => {
 
     const shapezMods = [
         ...externalMods.map(x => `http://localhost:3010/${x}`),
-        ...mods.map(x => `http://localhost:3010/${x.folder}/${x.folder}@${x.version}.js`),
+        ...mods.map(x => `http://localhost:3010/${x.folder}@${x.version}.js`),
     ];
 
     // Store in shapez config
@@ -344,7 +344,7 @@ module.exports = async ({ watch = false }) => {
         output: {
             filename: (pathData, assetInfo) => {
                 const mod = mods.find(x => x.id === pathData.chunk.name);
-                return `${pathData.chunk.name}/${pathData.chunk.name}@${mod.version}.js`;
+                return `${pathData.chunk.name}@${mod.version}.js`;
             },
             path: path.resolve(__dirname, "..", "build"),
         },
