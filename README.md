@@ -80,7 +80,7 @@ If your mod is finished and you want to share it you can run the following comma
 ```sh
 yarn build
 ```
-This will generate a `build` folder with a `mod.js` in it. The mod.js is the file you need to share it has all your images, translations, themes and css build in. 
+This will generate a `build` folder with a `<mod_id>@<version>.js` in it. The js file is the file you need to share it has all your images, translations, themes and css build in. 
 
 ## Creating a mod
 When everything is installed you should have a project with a `src` folder and in there some other directories: `js`, `css`, `translations`, `themes` and `res`. 
