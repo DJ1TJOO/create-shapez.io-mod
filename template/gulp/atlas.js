@@ -102,7 +102,7 @@ class CreateAtlas {
     }
 
     apply(compiler) {
-        compiler.hooks.compile.tap("CreateAtlas_compile", async () => {
+        compiler.hooks.beforeCompile.tapPromise("CreateAtlas_compile", async () => {
             for (let i = 0; i < this.mods.length; i++) {
                 await createAtlas(this.mods[i]);
             }

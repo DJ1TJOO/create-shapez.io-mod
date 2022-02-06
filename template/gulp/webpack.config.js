@@ -80,16 +80,18 @@ module.exports = async ({ watch = false }) => {
     );
     fs.writeFileSync(configPath, config);
 
+    const entries = mods.reduce(
+        (obj, x) => ({
+            ...obj,
+            [x.folder]: path.resolve(__dirname, "..", "src", x.folder, "js", x.entry),
+        }),
+        {}
+    );
+
     return {
         mode: watch ? "development" : "production",
         ...(watch ? { devtool: "hidden-source-map" } : {}),
-        entry: mods.reduce(
-            (obj, x) => ({
-                ...obj,
-                [x.folder]: path.resolve(__dirname, "..", "src", x.folder, "js", x.entry),
-            }),
-            {}
-        ),
+        entry: entries,
         watch,
         resolve: {
             extensions: [".ts", ".js"],
