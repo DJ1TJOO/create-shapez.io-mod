@@ -119,7 +119,7 @@ module.exports = async ({ watch = false }) => {
                 ? [
                       new SourceMapDevToolPlugin({
                           filename: "[file].map",
-                          publicPath: "http://localhost:3010/[name]/",
+                          publicPath: "http://localhost:3010/",
                       }),
                   ]
                 : []),
