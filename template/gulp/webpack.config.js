@@ -68,7 +68,7 @@ module.exports = async ({ watch = false }) => {
 
     const shapezMods = [
         ...externalMods.map(x => `http://localhost:3010/${x}`),
-        ...mods.map(x => `http://localhost:3010/${x.folder}@${x.version}.js`),
+        ...mods.map(x => `http://localhost:3010/${x.id}@${x.version}.js`),
     ];
 
     // Store in shapez config
@@ -83,7 +83,7 @@ module.exports = async ({ watch = false }) => {
     const entries = mods.reduce(
         (obj, x) => ({
             ...obj,
-            [x.folder]: path.resolve(__dirname, "..", "src", x.folder, "js", x.entry),
+            [x.id]: path.resolve(__dirname, "..", "src", x.folder, "js", x.entry),
         }),
         {}
     );
@@ -127,7 +127,7 @@ module.exports = async ({ watch = false }) => {
                 assert: watch ? "window.assert" : "false && window.assert",
                 assertAlways: "window.assert",
             }),
-            new CreateAtlas(mods.map(x => x.folder)),
+            new CreateAtlas(mods),
             // new StringReplacePlugin(),
 
             new CircularDependencyPlugin({

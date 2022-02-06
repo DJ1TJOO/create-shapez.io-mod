@@ -15,20 +15,20 @@ const execute = command =>
 // Link to download LibGDX runnable-texturepacker.jar
 const runnableTPSource = "https://libgdx.badlogicgames.com/ci/nightlies/runnables/runnable-texturepacker.jar";
 
-async function createAtlas(modFolder) {
+async function createAtlas({ folder, id }) {
     // Create base atlas
     const config = JSON.stringify("./atlas.json");
-    const source = JSON.stringify(`../src/${modFolder}/res`);
-    const dest = JSON.stringify(`../build/${modFolder}/atlases/`);
+    const source = JSON.stringify(`../src/${folder}/res`);
+    const dest = JSON.stringify(`../build/${id}/atlases/`);
 
     // Create build folder
-    if (fs.existsSync(`../build/${modFolder}/atlases/`)) {
-        fs.rmdirSync(`../build/${modFolder}/atlases/`, {
+    if (fs.existsSync(`../build/${id}/atlases/`)) {
+        fs.rmdirSync(`../build/${id}/atlases/`, {
             recursive: true,
         });
     }
 
-    fs.mkdirSync(`../build/${modFolder}/atlases/`, {
+    fs.mkdirSync(`../build/${id}/atlases/`, {
         recursive: true,
     });
 
@@ -69,10 +69,10 @@ async function createAtlas(modFolder) {
     }
 
     // Convert atlas information
-    atlasToJson.convert(`../build/${modFolder}/atlases/`);
+    atlasToJson.convert(`../build/${id}/atlases/`);
 
     // Minify image with lossy options
-    await imagemin([`../build/${modFolder}/atlases/*.{png}`], {
+    await imagemin([`../build/${id}/atlases/*.{png}`], {
         plugins: [
             imageminJpegtran({
                 quality: 80,

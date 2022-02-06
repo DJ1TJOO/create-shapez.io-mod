@@ -96,7 +96,10 @@ gulp.task("main.serve.standalone", gulp.series("main.serve.shapez.standalone", "
 gulp.task("main.build", async cb => {
     const webpackConfig = await require("./webpack.config.js")({});
     const compiler = webpack(webpackConfig);
-    compiler.run(cb);
+    compiler.run((err, result) => {
+        if (err) console.error(err);
+        cb();
+    });
 });
 gulp.task("main.build.dev", async cb => {
     const webpackConfig = await require("./webpack.config.js")({ watch: true });
