@@ -353,6 +353,7 @@ async function createTypings(options) {
 	for (let i = 0; i < modDirs.length; i++) {
 		const dir = modDirs[i];
 		fs.writeFileSync(path.join(options.targetDirectory, `src/${dir}/js/types.d.ts`), types, {
+			recursive: true,
 			overwrite: true,
 		});
 	}
