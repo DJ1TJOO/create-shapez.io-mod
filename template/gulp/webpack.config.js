@@ -7,9 +7,9 @@ const { DefinePlugin } = require("webpack");
 const { CreateAtlas } = require("./atlas");
 const { SourceMapDevToolPlugin } = require("webpack");
 
-function getModFolder(filePath) {
+function getModFolder(filePath, mods) {
     const dirs = path.dirname(filePath).replace(/\\/g, "/").split("/");
-    return dirs[dirs.indexOf("src") + 1];
+    return mods.find(x => x.folder === dirs[dirs.indexOf("src") + 1]).id;
 }
 
 module.exports = async ({ watch = false }) => {
@@ -194,7 +194,7 @@ module.exports = async ({ watch = false }) => {
                                         ),
                                     ];
 
-                                    const modFolder = getModFolder(this.resourcePath);
+                                    const modFolder = getModFolder(this.resourcePath, mods);
 
                                     if (matches.length > 0) {
                                         let variableName;
@@ -253,7 +253,7 @@ module.exports = async ({ watch = false }) => {
                                     {
                                         pattern: /extends[\s]*?Mod[\s]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
                                         replacement(match) {
-                                            const modFolder = getModFolder(this.resourcePath);
+                                            const modFolder = getModFolder(this.resourcePath, mods);
                                             if (
                                                 !fs.existsSync(
                                                     path.join(
@@ -286,7 +286,7 @@ module.exports = async ({ watch = false }) => {
                                     {
                                         pattern: /extends[\s]*?Mod[\s]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
                                         replacement(match) {
-                                            const modFolder = getModFolder(this.resourcePath);
+                                            const modFolder = getModFolder(this.resourcePath, mods);
 
                                             const files = fs.readdirSync(
                                                 path.resolve(
@@ -314,7 +314,7 @@ module.exports = async ({ watch = false }) => {
                                     {
                                         pattern: /extends[\s]*?Mod[\s]*?{[^]*?init[^]*?\([^]*?\)[^]*?{/gms,
                                         replacement(match) {
-                                            const modFolder = getModFolder(this.resourcePath);
+                                            const modFolder = getModFolder(this.resourcePath, mods);
 
                                             const files = fs.readdirSync(
                                                 path.resolve(__dirname, "..", "src", modFolder, "themes")
