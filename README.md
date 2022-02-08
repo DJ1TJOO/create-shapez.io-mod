@@ -54,6 +54,13 @@ npx create-shapezio-mod upgrade
 ```
 You can choose if you only want to update the build files or shapez.io.
 
+### Setting up a new shapez.io mod
+To setup more mods than just the one created on init you can use the following command. Again make sure all [requirements](#requirements) are installed.
+```sh
+npx create-shapezio-mod mod
+```
+This command creates a new folder inside the `src` folder. There you can start working on your new mod.
+
 ### Updating shapez.io typings
 When updating shapez.io a `types.d.ts` file is created to add type support. If this files somehow gets currupted you can fix it by running the following command in the shapezio-mods folder.
 ```sh
@@ -85,7 +92,7 @@ This will generate a `build` folder with a `<mod_id>@<version>.js` in it. The js
 ## Creating a mod
 When everything is installed you should have a project with a `src` folder and in there some other directories: `js`, `css`, `translations`, `themes` and `res`. 
 ### Javascript
-The `js` folder contains all the code for your script. In the `js` folder there is a `main.js` file this is the start of your mod. You can use the [shapez.io examples](https://github.com/tobspr/shapez.io/tree/modloader/mod_examples) for refence. Do note that you don't need to use `shapez.`, your editor will auto recognize all the shapez imports and import them, this way you get intellisense and autocompletion.
+The `js` folder contains all the code for your script. In the `js` folder there is a `main.js` file this is the start of your mod. You can use the [shapez.io examples](https://github.com/tobspr/shapez.io/tree/modloader/mod_examples) for refence. Do note that you don't need to use `shapez.`, your editor will auto recognize all the shapez imports and import them, this way you get intellisense and autocompletion. In side the javascript you can also import images. It will import the images as a base64 string. `import building1 from "../res/icons/building1.png";`
 ### Res
 To change or add images or building sprites you can use the `res` folder. To change building sprites put them in the `sprites/buildings` folder. You can use the python script to generate the blueprint images or create them your self and put them in the `sprites/blueprints` folder.
 ### Css

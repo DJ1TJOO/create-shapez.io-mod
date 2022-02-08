@@ -647,7 +647,7 @@ export async function createMod(options) {
 		{
 			title: 'Updating typings',
 			task: () => createTypings(options),
-			skip: () => (!options.installShapez ? 'Not installing shapez' : undefined),
+			skip: () => (!fs.existsSync(path.join(options.targetDirectory, 'shapez')) ? 'Shapez not installed' : undefined),
 		},
 		{
 			title: 'Saving options',

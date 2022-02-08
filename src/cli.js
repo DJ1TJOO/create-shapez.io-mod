@@ -27,6 +27,8 @@ export async function cli(args) {
 			.example('$0 upgrade --shapezRepo https://github.com/DJ1TJOO/shapez.io/tree/modloader-try-again', 'Changes the shapez.io build to latest on a custom repo')
 			.command('typings', 'Changes the shapez.io build')
 			.example('$0 typings', 'Updates typings to the current shapez.io')
+			.command('mod', 'Setup new mod')
+			.example('$0 typings', 'Sets up a new mod folder')
 
 			.alias('s', 'shapez')
 			.nargs('s', 1)
