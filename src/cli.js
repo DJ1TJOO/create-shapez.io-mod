@@ -3,6 +3,7 @@ import { upgrade } from './upgrade';
 import { typings } from './typings';
 import yargs from 'yargs/yargs';
 import fs from 'fs';
+import { mod } from './mod';
 
 export async function cli(args) {
 	const argsNoBin = args.slice(2, args.length);
@@ -12,6 +13,8 @@ export async function cli(args) {
 		upgrade(args.filter((x) => x !== 'upgrade'));
 	} else if (argsNoBin[0] === 'typings') {
 		typings(args.filter((x) => x !== 'typings'));
+	} else if (argsNoBin[0] === 'mod') {
+		mod(args.filter((x) => x !== 'mod'));
 	} else {
 		if (!argsNoBin[0]) argsNoBin[0] = '--help';
 

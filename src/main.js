@@ -14,7 +14,7 @@ const octokit = new Octokit();
 const access = promisify(fs.access);
 const copy = promisify(ncp);
 
-async function copyTemplateFiles(options) {
+async function copyTemplateFiles(options, other = true) {
 	// Copy template src files
 	if (options.modId) {
 		try {
@@ -34,15 +34,17 @@ async function copyTemplateFiles(options) {
 		}
 	}
 
-	const dirs = fs.readdirSync(options.templateDirectory).filter((x) => !x.includes('src'));
-	for (let i = 0; i < dirs.length; i++) {
-		const dir = dirs[i];
-		try {
-			await copy(path.join(options.templateDirectory, dir), path.join(options.targetDirectory, dir), {
-				clobber: false,
-			});
-		} catch (error) {
-			console.log(error);
+	if (other) {
+		const dirs = fs.readdirSync(options.templateDirectory).filter((x) => !x.includes('src'));
+		for (let i = 0; i < dirs.length; i++) {
+			const dir = dirs[i];
+			try {
+				await copy(path.join(options.templateDirectory, dir), path.join(options.targetDirectory, dir), {
+					clobber: false,
+				});
+			} catch (error) {
+				console.log(error);
+			}
 		}
 	}
 }
@@ -623,5 +625,37 @@ export async function updateTypings(options) {
 	await tasks.run();
 	console.log('%s Typings ready', chalk.green.bold('DONE'));
 
+	return true;
+}
+
+export async function createMod(options) {
+	options = parseOptions(options);
+
+	const pathName = url.fileURLToPath(import.meta.url);
+	const templateDir = path.resolve(pathName, '../../template/');
+	options.templateDirectory = templateDir;
+
+	const tasks = new Listr([
+		{
+			title: 'Copy new project files',
+			task: () => copyTemplateFiles(options, false),
+		},
+		{
+			title: 'Updating project files',
+			task: () => updateTemplateFiles(options),
+		},
+		{
+			title: 'Updating typings',
+			task: () => createTypings(options),
+			skip: () => (!options.installShapez ? 'Not installing shapez' : undefined),
+		},
+		{
+			title: 'Saving options',
+			task: () => saveOptions(options),
+		},
+	]);
+
+	await tasks.run();
+	console.log('%s Mod ready', chalk.green.bold('DONE'));
 	return true;
 }
