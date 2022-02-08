@@ -19,16 +19,16 @@ async function createAtlas({ folder, id }) {
     // Create base atlas
     const config = JSON.stringify("./atlas.json");
     const source = JSON.stringify(`../src/${folder}/res`);
-    const dest = JSON.stringify(`../build/${id}/atlases/`);
+    const dest = JSON.stringify(`../build/${id}_atlases/`);
 
     // Create build folder
-    if (fs.existsSync(`../build/${id}/atlases/`)) {
-        fs.rmdirSync(`../build/${id}/atlases/`, {
+    if (fs.existsSync(`../build/${id}_atlases/`)) {
+        fs.rmdirSync(`../build/${id}_atlases/`, {
             recursive: true,
         });
     }
 
-    fs.mkdirSync(`../build/${id}/atlases/`, {
+    fs.mkdirSync(`../build/${id}_atlases/`, {
         recursive: true,
     });
 
@@ -69,10 +69,10 @@ async function createAtlas({ folder, id }) {
     }
 
     // Convert atlas information
-    atlasToJson.convert(`../build/${id}/atlases/`);
+    atlasToJson.convert(`../build/${id}_atlases/`);
 
     // Minify image with lossy options
-    await imagemin([`../build/${id}/atlases/*.{png}`], {
+    await imagemin([`../build/${id}_atlases/*.{png}`], {
         plugins: [
             imageminJpegtran({
                 quality: 80,

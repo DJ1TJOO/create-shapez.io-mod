@@ -269,16 +269,16 @@ module.exports = async ({ watch = false }) => {
                                             }
 
                                             const atlases = `this.modInterface.registerAtlas(
-                                                            require("../../../build/${modFolder}/atlases/atlas0_hq.png"),
-                                                            JSON.stringify(require("../../../build/${modFolder}/atlases/atlas0_hq.json"))
+                                                            require("../../../build/${modFolder}_atlases/atlas0_hq.png"),
+                                                            JSON.stringify(require("../../../build/${modFolder}_atlases/atlas0_hq.json"))
                                                         );
                                                         this.modInterface.registerAtlas(
-                                                            require("../../../build/${modFolder}/atlases/atlas0_mq.png"),
-                                                            JSON.stringify(require("../../../build/${modFolder}/atlases/atlas0_mq.json"))
+                                                            require("../../../build/${modFolder}_atlases/atlas0_mq.png"),
+                                                            JSON.stringify(require("../../../build/${modFolder}_atlases/atlas0_mq.json"))
                                                         );
                                                         this.modInterface.registerAtlas(
-                                                            require("../../../build/${modFolder}/atlases/atlas0_lq.png"),
-                                                            JSON.stringify(require("../../../build/${modFolder}/atlases/atlas0_lq.json"))
+                                                            require("../../../build/${modFolder}_atlases/atlas0_lq.png"),
+                                                            JSON.stringify(require("../../../build/${modFolder}_atlases/atlas0_lq.json"))
                                                         );`;
                                             return `${match}\n${atlases}`;
                                         },
