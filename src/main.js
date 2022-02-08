@@ -531,9 +531,14 @@ export async function upgradeProject(options) {
 			skip: () => !options.updateFiles,
 		},
 		{
+			title: `Cloning${options.shapez === 'latest' ? ' latest' : ''} shapez.io build`,
+			task: () => cloneShapez(options),
+			skip: () => !options.installShapez || fs.existsSync(path.join(options.targetDirectory, 'shapez')),
+		},
+		{
 			title: `Downloading${options.shapez === 'latest' ? ' latest' : ''} shapez.io build`,
 			task: () => updateClonedShapez(options),
-			skip: () => !options.installShapez,
+			skip: () => !options.installShapez || !fs.existsSync(path.join(options.targetDirectory, 'shapez')),
 		},
 		{
 			title: 'Install dependencies',
