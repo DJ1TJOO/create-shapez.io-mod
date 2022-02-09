@@ -9,7 +9,7 @@ const { SourceMapDevToolPlugin } = require("webpack");
 
 function getModFolder(filePath, mods) {
     const dirs = path.dirname(filePath).replace(/\\/g, "/").split("/");
-    return mods.find(x => x.folder === dirs[dirs.indexOf("src") + 1]).id;
+    return mods.find(x => x.folder === dirs[dirs.indexOf("src") + 1]);
 }
 
 module.exports = async ({ watch = false }) => {
@@ -205,7 +205,13 @@ module.exports = async ({ watch = false }) => {
                                         // Get mod info from package.json
                                         const json = JSON.parse(
                                             fs.readFileSync(
-                                                path.resolve(__dirname, "..", "src", modFolder, "mod.json"),
+                                                path.resolve(
+                                                    __dirname,
+                                                    "..",
+                                                    "src",
+                                                    modFolder.folder,
+                                                    "mod.json"
+                                                ),
                                                 {
                                                     encoding: "utf-8",
                                                 }
@@ -259,7 +265,7 @@ module.exports = async ({ watch = false }) => {
                                                     path.join(
                                                         "..",
                                                         "build",
-                                                        modFolder,
+                                                        modFolder.id,
                                                         "atlases",
                                                         "atlas0_hq.png"
                                                     )
@@ -293,7 +299,7 @@ module.exports = async ({ watch = false }) => {
                                                     __dirname,
                                                     "..",
                                                     "src",
-                                                    modFolder,
+                                                    modFolder.folder,
                                                     "translations"
                                                 )
                                             );
@@ -317,7 +323,13 @@ module.exports = async ({ watch = false }) => {
                                             const modFolder = getModFolder(this.resourcePath, mods);
 
                                             const files = fs.readdirSync(
-                                                path.resolve(__dirname, "..", "src", modFolder, "themes")
+                                                path.resolve(
+                                                    __dirname,
+                                                    "..",
+                                                    "src",
+                                                    modFolder.folder,
+                                                    "themes"
+                                                )
                                             );
 
                                             let themes = "";
