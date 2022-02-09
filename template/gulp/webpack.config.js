@@ -275,8 +275,7 @@ module.exports = async ({ watch = false }) => {
                                                     path.join(
                                                         "..",
                                                         "build",
-                                                        modFolder.id,
-                                                        "atlases",
+                                                        modFolder.id + "_atlases",
                                                         "atlas0_hq.png"
                                                     )
                                                 )
