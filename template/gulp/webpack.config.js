@@ -37,7 +37,7 @@ module.exports = async ({ watch = false }) => {
                 fs.mkdirSync(path.join("../src", modFolder, "themes"));
             }
             const mod = JSON.parse(fs.readFileSync(path.join("../src", modFolder, "mod.json")));
-            mods.push({ folder: modFolder, ...mod });
+            if (!mod.disabled) mods.push({ folder: modFolder, ...mod });
         } catch (error) {
             console.log(`Could not find mod.json for '${modFolder}'`);
         }
