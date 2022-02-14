@@ -223,17 +223,27 @@ async function createTypings(options) {
 	types = types.replace(/\[x: string]: Array;/, '[x: string]: Array<any>;');
 	types = types.replace(/pendingPromises: Array<Promise>;/, 'pendingPromises: Array<Promise<any>>;');
 	types = types.replace(/var _default/gms, 'let _default');
+
+	
+	// mark @abstract functions as abstract
 	types = types.replace(/([*] @abstract\s+[*][/]\s*)/g, '$1abstract ');
+
+	// mark abstract classes as abstract
 	// BaseDataType,Component,BaseItem,AchievementProviderInterface,Entity,MetaBuilding,BaseHUDPart,GameMode,GameState,
 	// StorageInterface,BaseSprite,AdProviderInterface,AnalyticsInterface,PlatformWrapperInterface,BaseSetting,GameAnalyticsInterface
 	let abstractClasses = [];
 	types = types.replace(/class (\w+) ((((?!\bclass\b|\n\})[\n\s\S])+)abstract)/g, (s, a, b) => `abstract class ${(abstractClasses.push(a), a)} ${b}`);
-
+	// mark non-abstract classes non-abstract (maybe some of them are abstract tho)
 	for (let c of abstractClasses) {
 		types = types.replace(new RegExp(`((?<!abstract) class \\w+ extends )${c}`, 'g'), `$1NonAbstract(${c})`);
 	}
+	// static abstract fix
 	types = types.replace(/abstract static/g, 'static');
-	
+
+	// type runBefore/runAfter/replaceMethod
+	types = types.replace(/(C_?\d*)\["prototype"\],/g, 'InstanceType<$1>,');
+	types = types.replace(/\bO(_?\d*) extends \(.*?ReturnType<.*?>/g, 'O$1 extends P$1[M$1]');
+
 	types += `
 		declare const shapez: any;
 		declare function $shapez_registerMod(
