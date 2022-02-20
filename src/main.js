@@ -185,7 +185,7 @@ async function createTypings(options) {
 	// Generate types.d.ts
 	await new Promise((res, rej) =>
 		exec(
-			'yarn tsc src/js/application.js --declaration --allowJs --emitDeclarationOnly --skipLibCheck --out types.js',
+			'yarn tsc src/js/application.js --declaration --allowJs --emitDeclarationOnly --skipLibCheck --out types_raw.js',
 			{
 				cwd: path.join(options.targetDirectory, 'shapez'),
 			},
@@ -200,7 +200,7 @@ async function createTypings(options) {
 	);
 
 	// Update types
-	let types = fs.readFileSync(path.join(options.targetDirectory, 'shapez/types.d.ts'), 'utf-8');
+	let types = fs.readFileSync(path.join(options.targetDirectory, 'shapez/types_raw.d.ts'), 'utf-8');
 	types = types.replace(/declare module "([^]*?)"/gms, (matched, moduleName) => `declare module "shapez/${moduleName}"`);
 	types = types.replace(/import\("([^]*?)"\)/gms, (matched, moduleName, offset, string) => {
 		moduleName = moduleName.replace('.js', '');
@@ -219,87 +219,123 @@ async function createTypings(options) {
 		/import {([^]*?)} from "([^]*?)";/gms,
 		(matched, imports, moduleName) => `import {${imports}} from "shapez/${moduleName.replace(/\.\.\//gms, '').replace('.js', '')}"`,
 	);
+	types = types.replace(/(\n\s+)import (keyCode[\d_]*) = (\w+);/g, '$1const $2: typeof KEYCODES.$3;');
+	types = types.replace(/\[x: string]: Array;/, '[x: string]: Array<any>;');
+	types = types.replace(/pendingPromises: Array<Promise>;/, 'pendingPromises: Array<Promise<any>>;');
 	types = types.replace(/var _default/gms, 'let _default');
+
+	
+	// mark @abstract functions as abstract
+	types = types.replace(/([*] @abstract\s+[*][/]\s*)/g, '$1abstract ');
+
+	// mark abstract classes as abstract
+	// BaseDataType,Component,BaseItem,AchievementProviderInterface,Entity,MetaBuilding,BaseHUDPart,GameMode,GameState,
+	// StorageInterface,BaseSprite,AdProviderInterface,AnalyticsInterface,PlatformWrapperInterface,BaseSetting,GameAnalyticsInterface
+	let abstractClasses = [];
+	types = types.replace(/class (\w+) ((((?!\bclass\b|\n\})[\n\s\S])+)abstract)/g, (s, a, b) => `abstract class ${(abstractClasses.push(a), a)} ${b}`);
+	// mark non-abstract classes non-abstract (maybe some of them are abstract tho)
+	for (let c of abstractClasses) {
+		types = types.replace(new RegExp(`((?<!abstract) class \\w+ extends )${c}`, 'g'), `$1NonAbstract(${c})`);
+	}
+	// static abstract fix
+	types = types.replace(/abstract static/g, 'static');
+
+	// type runBefore/runAfter/replaceMethod
+	types = types.replace(/(C_?\d*)\["prototype"\],/g, 'InstanceType<$1>,');
+	types = types.replace(/\bO(_?\d*) extends \(.*?ReturnType<.*?>/g, 'O$1 extends P$1[M$1]');
+
 	types += `
-					declare const shapez: any;
-					declare function $shapez_registerMod(
-						mod: typeof import("shapez/mods/mod").Mod,
-						meta: import("shapez/mods/modloader").ModMetadata
-					): void;
+		declare const shapez: any;
+		declare function $shapez_registerMod(
+			mod: typeof import("shapez/mods/mod").Mod,
+			meta: import("shapez/mods/modloader").ModMetadata
+		): void;
 
-					declare function assert(condition: boolean | object | string, ...errorMessage: string[]): void;
-					declare function assertAlways(condition: boolean | object | string, ...errorMessage: string[]): void;
+		declare function assert(condition: boolean | object | string, ...errorMessage: string[]): void;
+		declare function assertAlways(condition: boolean | object | string, ...errorMessage: string[]): void;
 
-					declare interface FactoryTemplate<T> {
-						entries: Array<T>;
-						entryIds: Array<string>;
-						idToEntry: any;
+		declare interface FactoryTemplate<T> {
+			entries: Array<T>;
+			entryIds: Array<string>;
+			idToEntry: any;
 
-						getId(): string;
-						getAllIds(): Array<string>;
-						register(entry: T): void;
-						hasId(id: string): boolean;
-						findById(id: string): T;
-						getEntries(): Array<T>;
-						getNumEntries(): number;
-					}
+			getId(): string;
+			getAllIds(): Array<string>;
+			register(entry: T): void;
+			hasId(id: string): boolean;
+			findById(id: string): T;
+			getEntries(): Array<T>;
+			getNumEntries(): number;
+		}
 
-					declare interface SingletonFactoryTemplate<T> {
-						entries: Array<T>;
-						idToEntry: any;
+		declare interface SingletonFactoryTemplate<T> {
+			entries: Array<T>;
+			idToEntry: any;
 
-						getId(): string;
-						getAllIds(): Array<string>;
-						register(classHandle: T): void;
-						hasId(id: string): boolean;
-						findById(id: string): T;
-						findByClass(classHandle: T): T;
-						getEntries(): Array<T>;
-						getNumEntries(): number;
-					}
+			getId(): string;
+			getAllIds(): Array<string>;
+			register(classHandle: T): void;
+			hasId(id: string): boolean;
+			findById(id: string): T;
+			findByClass(classHandle: T): T;
+			getEntries(): Array<T>;
+			getNumEntries(): number;
+		}
 
-					declare class TypedTrackedState<T> {
-						constructor(callbackMethod?: (value: T) => void, callbackScope?: any);
+		declare class TypedTrackedState<T> {
+			constructor(callbackMethod?: (value: T) => void, callbackScope?: any);
 
-						set(value: T, changeHandler?: (value: T) => void, changeScope?: any): void;
+			set(value: T, changeHandler?: (value: T) => void, changeScope?: any): void;
 
-						setSilent(value: any): void;
-						get(): T;
-					}
+			setSilent(value: any): void;
+			get(): T;
+		}
 
-					declare interface TypedSignal<T extends Array<any>> {
-						add(receiver: (...args: T) => /* STOP_PROPAGATION */ string | void, scope?: object);
-						addToTop(receiver: (...args: T) => /* STOP_PROPAGATION */ string | void, scope?: object);
-						remove(receiver: (...args: T) => /* STOP_PROPAGATION */ string | void);
+		declare interface TypedSignal<T extends Array<any>> {
+			add(receiver: (...args: T) => /* STOP_PROPAGATION */ string | void, scope?: object): void;
+			addToTop(receiver: (...args: T) => /* STOP_PROPAGATION */ string | void, scope?: object): void;
+			remove(receiver: (...args: T) => /* STOP_PROPAGATION */ string | void): void;
 
-						dispatch(...args: T): /* STOP_PROPAGATION */ string | void;
+			dispatch(...args: T): /* STOP_PROPAGATION */ string | void;
 
-						removeAll();
-					}
+			removeAll(): void;
+		}
 
-					declare type Layer = "regular" | "wires";
-					declare type ItemType = "shape" | "color" | "boolean";`;
+		declare type Layer = "regular" | "wires";
+		declare type ItemType = "shape" | "color" | "boolean";
+		
+		declare function NonAbstract<
+			C extends abstract new (...args: any) => any = typeof import("shapez/savegame/serialization_data_types").BaseDataType,
+			T = InstanceType<C>
+		>(cls: C):
+			| Pick<C, keyof C> & {
+				new(...a: ConstructorParameters<C>): {
+					[k in keyof T]: T[k];
+				}
+			};
+		
+		`.replace(/\n\t\t/g, '\n');
 
 	// Add globalConfig types
 	types = types.replace(
 		/export namespace globalConfig {/g,
 		`
-    export namespace globalConfig {
-		export const tileSize: number;
-        export const halfTileSize: number;
-        export const beltSpeedItemsPerSecond: number;
-        export const achievementSliceDuration: number;
-        export const itemSpacingOnBelts: number;
-        export const assetsDpi: number;
-        export const assetsSharpness: number;
-        export const puzzleModeSpeed: number;
-        export const chunkAggregateSize: number;
-        export const mapChunkSize: number;
-        export const readerAnalyzeIntervalSeconds: number;
-        export const smoothing: {
-            quality: string;
-            smoothMainCanvas: boolean;
-        };
+		export namespace globalConfig {
+			export const tileSize: number;
+			export const halfTileSize: number;
+			export const beltSpeedItemsPerSecond: number;
+			export const achievementSliceDuration: number;
+			export const itemSpacingOnBelts: number;
+			export const assetsDpi: number;
+			export const assetsSharpness: number;
+			export const puzzleModeSpeed: number;
+			export const chunkAggregateSize: number;
+			export const mapChunkSize: number;
+			export const readerAnalyzeIntervalSeconds: number;
+			export const smoothing: {
+				quality: string;
+				smoothMainCanvas: boolean;
+			};
         export const debug: {
             renderForTrailer: boolean;
             framePausesBetweenTicks: number;
@@ -335,8 +371,9 @@ async function createTypings(options) {
             disableMusic: boolean;
             testAds: boolean;
             testPuzzleMod: boolean;
-        };`,
+        };`.replace(/\n\t\t/g, '\n'),
 	);
+	fs.writeFileSync(path.join(options.targetDirectory, 'shapez/types_fixed.d.ts'), types);
 
 	types = prettier.format(types, {
 		parser: 'typescript',
@@ -351,6 +388,8 @@ async function createTypings(options) {
 		arrowParens: 'avoid',
 		endOfLine: 'auto',
 	});
+	fs.writeFileSync(path.join(options.targetDirectory, 'shapez/types_formatted.d.ts'), types);
+
 	const modDirs = fs.readdirSync(path.join(options.targetDirectory, 'src'));
 	for (let i = 0; i < modDirs.length; i++) {
 		const dir = modDirs[i];
