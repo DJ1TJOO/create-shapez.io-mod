@@ -235,6 +235,7 @@ module.exports = async ({ watch = false }) => {
                                             version: json.version,
                                             author: json.author,
                                             settings: json.settings,
+                                            ...(json.modId ? { modId: json.modId } : {}),
                                         };
 
                                         return `\nwindow.$shapez_registerMod(${variableName}, ${JSON.stringify(
