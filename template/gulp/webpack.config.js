@@ -227,19 +227,9 @@ module.exports = async ({ watch = false }) => {
                                                 }
                                             )
                                         );
-                                        const info = {
-                                            name: json.name,
-                                            description: json.description,
-                                            website: json.website,
-                                            id: json.id,
-                                            version: json.version,
-                                            author: json.author,
-                                            settings: json.settings,
-                                            ...(json.modId ? { modId: json.modId } : {}),
-                                        };
 
                                         return `\nwindow.$shapez_registerMod(${variableName}, ${JSON.stringify(
-                                            info
+                                            json
                                         )});`;
                                     } else {
                                         return "";
