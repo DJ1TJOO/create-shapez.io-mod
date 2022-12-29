@@ -1,29 +1,29 @@
-import arg from 'arg';
-import inquirer from 'inquirer';
-import { createMod } from './main';
+import arg from "arg";
+import inquirer from "inquirer";
+import { createMod } from "./main";
 
 function parseArgumentsModOptions(rawArgs) {
 	const args = arg(
 		{
-			'--yes': Boolean,
-			'-y': '--yes',
+			"--yes": Boolean,
+			"-y": "--yes",
 		},
 		{
 			argv: rawArgs.slice(2),
-		},
+		}
 	);
 	return {
-		skipPrompts: args['--yes'] || false,
+		skipPrompts: args["--yes"] || false,
 	};
 }
 
 async function promptForMissingOptions(options) {
-	const defaultName = 'shapezio-mod';
-	const defaultModId = 'mod';
-	const defaultDescription = '';
-	const defaultAuthor = '';
-	const defaultWebsite = '';
-	const defaultVesion = '1.0.0';
+	const defaultName = "shapezio-mod";
+	const defaultModId = "mod";
+	const defaultDescription = "";
+	const defaultAuthor = "";
+	const defaultWebsite = "";
+	const defaultVesion = "1.0.0";
 
 	if (options.skipPrompts) {
 		return {
@@ -34,44 +34,44 @@ async function promptForMissingOptions(options) {
 			description: defaultDescription,
 			author: defaultAuthor,
 			version: defaultVesion,
-			packageManager: 'yarn',
+			packageManager: "yarn",
 		};
 	}
 
 	const questions = [];
 	questions.push({
-		name: 'name',
-		message: 'Name:',
+		name: "name",
+		message: "Name:",
 		default: defaultName,
 	});
 
 	questions.push({
-		name: 'modId',
-		message: 'Mod ID:',
+		name: "modId",
+		message: "Mod ID:",
 		default: defaultModId,
 	});
 
 	questions.push({
-		name: 'version',
-		message: 'Version:',
+		name: "version",
+		message: "Version:",
 		default: defaultVesion,
 	});
 
 	questions.push({
-		name: 'description',
-		message: 'Description:',
+		name: "description",
+		message: "Description:",
 		default: defaultDescription,
 	});
 
 	questions.push({
-		name: 'author',
-		message: 'Author:',
+		name: "author",
+		message: "Author:",
 		default: defaultAuthor,
 	});
 
 	questions.push({
-		name: 'website',
-		message: 'Website:',
+		name: "website",
+		message: "Website:",
 		default: defaultWebsite,
 	});
 
@@ -84,7 +84,7 @@ async function promptForMissingOptions(options) {
 		description: answers.description,
 		author: answers.author,
 		version: answers.version,
-		packageManager: 'yarn',
+		packageManager: "yarn",
 	};
 }
 
