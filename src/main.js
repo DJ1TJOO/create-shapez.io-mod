@@ -524,7 +524,7 @@ async function createTypings(options) {
 		const dir = modDirs[i];
 
 		if (
-			fs.existsSync(
+			!fs.existsSync(
 				path.join(options.targetDirectory, "src", dir, "mod.json")
 			)
 		)
