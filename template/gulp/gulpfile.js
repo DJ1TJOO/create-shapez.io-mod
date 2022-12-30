@@ -107,7 +107,7 @@ gulp.task("main.build.dev", async cb => {
     compiler.hooks.afterCompile.tap("reloadShapez", () => {
         reloadShapez();
     });
-    const devServerOptions = { ...webpackConfig.devServer, open: true };
+    const devServerOptions = { ...webpackConfig.devServer, open: false };
     const server = new WebpackDevServer(devServerOptions, compiler);
 
     const runServer = async () => {
