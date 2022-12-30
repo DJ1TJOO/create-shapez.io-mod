@@ -4,7 +4,7 @@
     "license": "GPL-3.0-only",
     "scripts": {
         "dev": "cd gulp && yarn gulp",
-        "devStandalone": "cd gulp && yarn gulp main.watch.standalone",
+        "devBrowser": "cd gulp && yarn gulp main.watch",
         "build": "cd gulp && yarn gulp main.build",
         "tslint": "cd src/js && yarn tsc",
         "lint": "yarn eslint src/js",
