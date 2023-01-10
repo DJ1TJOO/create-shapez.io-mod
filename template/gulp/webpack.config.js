@@ -229,7 +229,7 @@ module.exports = async ({ watch = false }) => {
                                         );
 
                                         return `\nwindow.$shapez_registerMod(${variableName}, ${JSON.stringify(
-                                            json
+                                            { ...json, disabled: undefined }
                                         )});`;
                                     } else {
                                         return "";
