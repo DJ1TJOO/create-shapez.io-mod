@@ -20,22 +20,27 @@ const runnableTPSource = "https://libgdx.badlogicgames.com/ci/nightlies/runnable
 async function computeMetaHash(folder, inputHash = null) {
     const hash = inputHash ? inputHash : createHash("sha256");
     const info = await fs.promises.readdir(folder, { withFileTypes: true });
+
+    let files = 0;
     // construct a string from the modification date, the filename and the filesize
     for (let item of info) {
         const fullPath = path.join(folder, item.name);
         if (item.isFile()) {
+            files++;
             const statInfo = await fs.promises.stat(fullPath);
             // compute hash string name:size:mtime
             const fileInfo = `${fullPath}:${statInfo.size}:${statInfo.mtimeMs}`;
             hash.update(fileInfo);
         } else if (item.isDirectory()) {
             // recursively walk sub-folders
-            await computeMetaHash(fullPath, hash);
+            files += await computeMetaHash(fullPath, hash);
         }
     }
     // if not being called recursively, get the digest and return it as the hash result
     if (!inputHash) {
-        return hash.digest();
+        return { hash: hash.digest(), files };
+    } else {
+        return files;
     }
 }
 
@@ -46,10 +51,10 @@ async function createAtlas({ folder, id }, plugin) {
     const dest = path.join("../", "build", `${id}_atlases`);
 
     const filesHash = await computeMetaHash(source);
-    if (plugin.cache[id] && plugin.cache[id].equals(filesHash)) {
+    if (filesHash.files < 1 || (plugin.cache[id] && plugin.cache[id].equals(filesHash.hash))) {
         return;
     }
-    plugin.cache[id] = filesHash;
+    plugin.cache[id] = filesHash.hash;
 
     // Create build folder
     if (fs.existsSync(`../build/${id}_atlases/`)) {
