@@ -1,5 +1,7 @@
+const { createHash } = require("crypto");
 const { existsSync } = require("fs");
 const fs = require("fs");
+const path = require("path");
 const imagemin = require("imagemin");
 const imageminGifsicle = require("imagemin-gifsicle");
 const imageminJpegtran = require("imagemin-jpegtran");
@@ -15,11 +17,39 @@ const execute = command =>
 // Link to download LibGDX runnable-texturepacker.jar
 const runnableTPSource = "https://libgdx.badlogicgames.com/ci/nightlies/runnables/runnable-texturepacker.jar";
 
-async function createAtlas({ folder, id }) {
+async function computeMetaHash(folder, inputHash = null) {
+    const hash = inputHash ? inputHash : createHash("sha256");
+    const info = await fs.promises.readdir(folder, { withFileTypes: true });
+    // construct a string from the modification date, the filename and the filesize
+    for (let item of info) {
+        const fullPath = path.join(folder, item.name);
+        if (item.isFile()) {
+            const statInfo = await fs.promises.stat(fullPath);
+            // compute hash string name:size:mtime
+            const fileInfo = `${fullPath}:${statInfo.size}:${statInfo.mtimeMs}`;
+            hash.update(fileInfo);
+        } else if (item.isDirectory()) {
+            // recursively walk sub-folders
+            await computeMetaHash(fullPath, hash);
+        }
+    }
+    // if not being called recursively, get the digest and return it as the hash result
+    if (!inputHash) {
+        return hash.digest();
+    }
+}
+
+async function createAtlas({ folder, id }, plugin) {
     // Create base atlas
-    const config = JSON.stringify("./atlas.json");
-    const source = JSON.stringify(`../src/${folder}/res`);
-    const dest = JSON.stringify(`../build/${id}_atlases/`);
+    const config = "./atlas.json";
+    const source = path.join("../", "src", folder, "res");
+    const dest = path.join("../", "build", `${id}_atlases`);
+
+    const filesHash = await computeMetaHash(source);
+    if (plugin.cache[id] && plugin.cache[id].equals(filesHash)) {
+        return;
+    }
+    plugin.cache[id] = filesHash;
 
     // Create build folder
     if (fs.existsSync(`../build/${id}_atlases/`)) {
@@ -63,7 +93,11 @@ async function createAtlas({ folder, id }) {
             }
         }
 
-        execute(`java -jar runnable-texturepacker.jar ${source} ${dest} atlas0 ${config}`);
+        execute(
+            `java -jar runnable-texturepacker.jar ${JSON.stringify(source)} ${JSON.stringify(
+                dest
+            )} atlas0 ${JSON.stringify(config)}`
+        );
     } catch (error) {
         console.warn("Building atlas failed. Java not found / unsupported version?");
     }
@@ -99,12 +133,13 @@ async function createAtlas({ folder, id }) {
 class CreateAtlas {
     constructor(mods) {
         this.mods = mods;
+        this.cache = {};
     }
 
     apply(compiler) {
         compiler.hooks.beforeCompile.tapPromise("CreateAtlas_compile", async () => {
             for (let i = 0; i < this.mods.length; i++) {
-                await createAtlas(this.mods[i]);
+                await createAtlas(this.mods[i], this);
             }
         });
     }
