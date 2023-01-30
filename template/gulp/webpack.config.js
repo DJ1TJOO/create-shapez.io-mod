@@ -200,7 +200,7 @@ module.exports = async ({ watch = false }) => {
                                 footer(source) {
                                     const matches = [
                                         ...source.matchAll(
-                                            /class[\s]*?([a-zA-Z0-9_-]*?)[\s]*?extends[\s]*?Mod[\s]*?{[^]*?init[\s]*?\(\)[\s]*?{/gms
+                                            /class[\s]*?([a-zA-Z0-9_-]*?)[\s]*?extends[\s]*?Mod[\s]*?{[^]*?^(?!function$).*init[\s]*?\(\)[\s]*?{/gms
                                         ),
                                     ];
 
@@ -251,14 +251,16 @@ module.exports = async ({ watch = false }) => {
                                         },
                                     },
                                     {
-                                        pattern: /extends[\s]*?Mod[\s]*?{[^]*?init[\s]*?\(\)[\s]*?{/gms,
+                                        pattern:
+                                            /extends[\s]*?Mod[\s]*?{[^]*?^(?!function$).*init[\s]*?\(\)[\s]*?{/gms,
                                         replacement: match => {
                                             const css = `this.modInterface.registerCss(require("../css/main.scss").default);`;
                                             return `${match}\n${css}`;
                                         },
                                     },
                                     {
-                                        pattern: /extends[\s]*?Mod[\s]*?{[^]*?init[\s]*?\(\)[\s]*?{/gms,
+                                        pattern:
+                                            /extends[\s]*?Mod[\s]*?{[^]*?^(?!function$).*init[\s]*?\(\)[\s]*?{/gms,
                                         replacement(match) {
                                             const modFolder = getModFolder(this.resourcePath, mods);
                                             if (
@@ -290,7 +292,8 @@ module.exports = async ({ watch = false }) => {
                                         },
                                     },
                                     {
-                                        pattern: /extends[\s]*?Mod[\s]*?{[^]*?init[\s]*?\(\)[\s]*?{/gms,
+                                        pattern:
+                                            /extends[\s]*?Mod[\s]*?{[^]*?^(?!function$).*init[\s]*?\(\)[\s]*?{/gms,
                                         replacement(match) {
                                             const modFolder = getModFolder(this.resourcePath, mods);
 
@@ -318,7 +321,8 @@ module.exports = async ({ watch = false }) => {
                                         },
                                     },
                                     {
-                                        pattern: /extends[\s]*?Mod[\s]*?{[^]*?init[\s]*?\(\)[\s]*?{/gms,
+                                        pattern:
+                                            /extends[\s]*?Mod[\s]*?{[^]*?^(?!function$).*init[\s]*?\(\)[\s]*?{/gms,
                                         replacement(match) {
                                             const modFolder = getModFolder(this.resourcePath, mods);
 
