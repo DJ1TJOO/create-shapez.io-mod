@@ -109,7 +109,7 @@ Please report any bugs you find in the [shapez.io modloader discord](https://dis
 - Follow the instructions on https://code.visualstudio.com/docs/setup
 
 ## Installing nodejs
-- Download and install nodejs from the official nodejs website: https://nodejs.org/en/download/
+- Download and install nodejs from the official nodejs website: https://nodejs.org/en/blog/release/v16.16.0
 - Check if nodejs is installed correctly by running `node --version`
   - If not try again or search on the internet
 
@@ -120,7 +120,7 @@ Please report any bugs you find in the [shapez.io modloader discord](https://dis
   ```
 
 ## Installing java
-- Download and install java from the official java website: https://www.oracle.com/java/technologies/downloads/
+- Download and install java from the official java website. It needs to be Node 16: https://www.oracle.com/java/technologies/downloads/
 - Check if java is installed correctly by running `java -version`
   - If not add java to path: https://www.java.com/en/download/help/path.html
 
