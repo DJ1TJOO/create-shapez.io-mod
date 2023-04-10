@@ -81,6 +81,7 @@ If you want to test your mod while making changes you can serve the mod with sha
 ```sh
 yarn dev
 ```
+A browser tab and shapez will start. Close the browser tab and hit F5 in the shapez winow.
 It will automatically reload when you make a change to your mod. 
 
 ### Building the mod
